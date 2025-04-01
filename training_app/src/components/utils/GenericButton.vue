@@ -1,15 +1,15 @@
 <script setup lang="ts">
-defineProps({
+import type { PropType } from 'vue'
+const props = defineProps({
   desktopText: { type: String, default: '' },
   mobileText: { type: String, default: '' },
   color: { type: String, default: '#4caf50' },
-  type: { type: String, default: 'button' },
+  type: { type: String as PropType<'button' | 'submit' | 'reset'>, default: 'button' },
   textColor: { type: String, default: '#fff' } // nouveau prop pour la couleur du texte
-});
-const emit = defineEmits(['click']);
-
+})
+const emit = defineEmits(['click'])
 function handleClick(event: Event) {
-  emit('click', event);
+  emit('click', event)
 }
 </script>
 
@@ -32,20 +32,30 @@ button {
   transition: background-color 0.3s ease, transform 0.2s ease;
   margin: 10px;
 }
+
 button:hover {
   transform: scale(1.05);
 }
+
 button:active {
   transform: scale(0.95);
 }
+
 .desktop-text {
   display: inline;
 }
+
 .mobile-text {
   display: none;
 }
+
 @media (max-width: 600px) {
-  .desktop-text { display: none; }
-  .mobile-text { display: inline; }
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: inline;
+  }
 }
 </style>
