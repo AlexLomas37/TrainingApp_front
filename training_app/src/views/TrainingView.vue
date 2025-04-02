@@ -11,7 +11,7 @@
             </div>
             <div v-if="training.exercices && training.exercices.length">
                 <TrainingItem v-for="(exercice, index) in training.exercices" :key="index" :exerciseName="exercice.name"
-                    :time="exercice.time" @click="openExercicePopup(exercice)" />
+                    :time="exercice.time" :repetitions="exercice.repetitions" @click="openExercicePopup(exercice)" />
             </div>
             <div v-else>
                 <p>Aucun exercice trouvé.</p>
@@ -25,9 +25,7 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView :exercice="selectedExercice" />
-                <GenericButton desktopText="Fermer" mobileText="Fermer" color="#f44336" type="button"
-                    @click="closePopup" />
+                <ExerciceView :exercice="selectedExercice" @close="closePopup" style="width: 100%; height: 100%;" />
             </div>
         </div>
 
@@ -131,6 +129,11 @@ export default {
 
 .header-container h2 {
     margin: 0;
+}
+
+.container {
+    width: 100vw;
+    margin: 0 auto;
 }
 
 .popup-overlay {
