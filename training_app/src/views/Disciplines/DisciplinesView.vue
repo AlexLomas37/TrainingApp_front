@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+
+interface Discipline {
+  id: number
+  name: string
+  description: string
+  // ...other fields if any...
+}
+
 import CardItem from '@/components/utils/CardItem.vue'
 import AddDisciplineItem from '@/components/AddDisciplineItem.vue'
 import GenericButton from '@/components/utils/GenericButton.vue'
 
-const apiData = ref([])
+// Change ref type to Discipline[]
+const apiData = ref<Discipline[]>([])
 const error = ref(null)
 const loading = ref(true)
 const showPopup = ref(false)
@@ -26,7 +35,7 @@ async function fetchDisciplines() {
 }
 
 // Mise à jour du gestionnaire pour utiliser la réactivité immuable
-function handleDisciplineAdded(newDiscipline: any) {
+function handleDisciplineAdded(newDiscipline: Discipline) {
     showPopup.value = false
     console.log("Nouvelle discipline reçue:", newDiscipline)  // pour debug
     apiData.value = [...apiData.value, newDiscipline]
