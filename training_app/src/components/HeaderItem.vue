@@ -45,10 +45,12 @@ export default {
     /* Always visible logo; keep styling as desired */
     text-decoration: none;
     color: inherit;
+    margin-right: 1rem;
 }
 
 .header-title {
     margin: 0;
+    white-space: nowrap;
 }
 
 /* Hamburger button */
