@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import GenericButton from '@/components/utils/GenericButton.vue';
+import GenericInput from '@/components/utils/GenericInput.vue';
+import GenericTextArea from '@/components/utils/GenericTextArea.vue'
 
 // Déclaration globale de BASE_API_URL
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
@@ -8,34 +10,33 @@ const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_
 const emit = defineEmits(['close']);
 const message = ref('');
 
+// new reactive variables
+const disciplineName = ref('');
+const disciplineDescription = ref('');
+
 function handleSubmit(e: Event) {
-  e.preventDefault()
-  const target = e.target as HTMLFormElement
-  const formData = new FormData(target)
-  const disciplineName = formData.get('disciplineName')
-  const disciplineDescription = formData.get('disciplineDescription')
-  message.value = ''
-  const apiUrl = `${BASE_API_URL}/disciplines`
+  e.preventDefault();
+  message.value = '';
+  const apiUrl = `${BASE_API_URL}/disciplines`;
   fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name: disciplineName,
-      description: disciplineDescription,
+      name: disciplineName.value,
+      description: disciplineDescription.value,
     })
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Failed to add discipline')
+        throw new Error('Failed to add discipline');
       }
-      return response.json()
+      return response.json();
     })
     .then(data => {
-      // Rafraîchit la page pour voir les changements
-      window.location.reload()
+      window.location.reload();
     })
     .catch(error => {
-      console.error('Error:', error)
+      console.error('Error:', error);
     })
 }
 </script>
@@ -49,10 +50,9 @@ function handleSubmit(e: Event) {
     <div class="card-body">
       <form @submit.prevent="handleSubmit">
         <label>Nom de la discipline</label>
-        <input class="input" type="text" name="disciplineName" placeholder="Nom de la discipline" required />
+        <GenericInput v-model="disciplineName" type="text" placeholder="Nom de la discipline" required />
         <label>Description de la discipline</label>
-        <textarea class="input" name="disciplineDescription" placeholder="Description de la discipline"
-          required></textarea>
+        <GenericTextArea v-model="disciplineDescription" placeholder="Description de la discipline" required class="vertical-only" />
         <div v-if="message">
           <p>{{ message }}</p>
         </div>
@@ -178,5 +178,9 @@ textarea.input {
   display: flex;
   justify-content: space-between;
   gap: 50px;
+} 
+
+.vertical-only {
+  resize: vertical !important;
 }
 </style>

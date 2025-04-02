@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import GenericButton from '@/components/utils/GenericButton.vue';
+import GenericInput from '@/components/utils/GenericInput.vue';
+import GenericTextArea from '@/components/utils/GenericTextArea.vue'; // ajout
 
 // Constante globale pour l'API
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
@@ -9,22 +11,22 @@ const props = defineProps<{ disciplineId: number }>();
 const emit = defineEmits(['close']);
 const message = ref('');
 
+// new reactive variables
+const trainingName = ref('');
+const trainingDescription = ref('');
+const trainingDuration = ref('');
+
 function handleSubmit(e: Event) {
-  e.preventDefault()
-  const target = e.target as HTMLFormElement
-  const formData = new FormData(target)
-  const trainingName = formData.get('trainingName')
-  const trainingDescription = formData.get('trainingDescription')
-  const trainingDuration = formData.get('trainingDuration')
-  message.value = ''
-  const apiUrl = `${BASE_API_URL}/trainings`
+  e.preventDefault();
+  message.value = '';
+  const apiUrl = `${BASE_API_URL}/trainings`;
   fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name: trainingName,
-      description: trainingDescription,
-      time: trainingDuration,
+      name: trainingName.value,
+      description: trainingDescription.value,
+      time: trainingDuration.value,
       discipline: {
         id: props.disciplineId
       }
@@ -32,15 +34,15 @@ function handleSubmit(e: Event) {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Échec de l\'ajout du training')
+        throw new Error('Échec de l\'ajout du training');
       }
-      return response.json()
+      return response.json();
     })
     .then(data => {
-      window.location.reload()
+      window.location.reload();
     })
     .catch(error => {
-      console.error('Error:', error)
+      console.error('Error:', error);
     })
 }
 </script>
@@ -54,12 +56,12 @@ function handleSubmit(e: Event) {
     <div class="card-body">
       <form @submit.prevent="handleSubmit">
         <label>Nom de l'entraînement</label>
-        <input class="input" type="text" name="trainingName" placeholder="Nom de l'entraînement" required />
+        <GenericInput v-model="trainingName" type="text" placeholder="Nom de l'entraînement" required style="width: 100%;" />
         <label>Description de l'entraînement</label>
-        <textarea class="input" name="trainingDescription" placeholder="Description de l'entraînement"
-          required></textarea>
+        <!-- Remplacement du textarea par le composant GenericTextArea -->
+        <GenericTextArea v-model="trainingDescription" placeholder="Description de l'entraînement" required class="vertical-only" style="width: 100%;" />
         <label>Durée de l'entrainement (minutes)</label>
-        <input class="input" type="number" name="trainingDuration" placeholder="Durée en minutes" required />
+        <GenericInput v-model="trainingDuration" type="number" placeholder="Durée en minutes" required style="width: 100%;" />
         <div v-if="message">
           <p>{{ message }}</p>
         </div>
@@ -176,5 +178,9 @@ textarea.input {
   display: flex;
   justify-content: space-between;
   gap: 50px;
+}
+
+.vertical-only {
+  resize: vertical !important;
 }
 </style>

@@ -4,19 +4,19 @@
         <form @submit.prevent="submitExercice">
             <div>
                 <label for="exName">Nom de l'exercice :</label>
-                <input id="exName" type="text" v-model="exercice.name" required />
+                <GenericInput v-model="exercice.name" type="text" placeholder="Nom de l'exercice" required style="width: 100%;" />
             </div>
             <div>
                 <label for="exDesc">Description :</label>
-                <textarea id="exDesc" v-model="exercice.description" required></textarea>
+                <GenericTextArea v-model="exercice.description" placeholder="Description de l'exercice" required class="vertical-only" style="width: 100%;" />
             </div>
             <div>
                 <label for="exTime">Temps (en minutes) :</label>
-                <input id="exTime" type="number" v-model="exercice.time" />
+                <GenericInput v-model="exercice.time" type="number" placeholder="Temps en minutes" style="width: 100%;" />
             </div>
             <div>
                 <label for="exRep">Nombre de répétitions :</label>
-                <input id="exRep" type="number" v-model="exercice.repetition" />
+                <GenericInput v-model="exercice.repetition" type="number" placeholder="Nombre de répétitions" style="width: 100%;" />
             </div>
             <div class="button-container">
                 <GenericButton type="button" color="red" desktopText="Fermer" mobileText="Fermer" @click="closePopup" />
@@ -28,6 +28,8 @@
 
 <script>
 import GenericButton from '@/components/utils/GenericButton.vue';
+import GenericInput from '@/components/utils/GenericInput.vue';
+import GenericTextArea from '@/components/utils/GenericTextArea.vue';
 
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
@@ -40,7 +42,9 @@ export default {
         }
     },
     components: {
-        GenericButton
+        GenericButton,
+        GenericInput,
+        GenericTextArea
     },
     data() {
         return {
@@ -48,7 +52,7 @@ export default {
                 name: '',
                 description: '',
                 time: null,
-                repetitions: null
+                repetition: null
             }
         }
     },
@@ -99,5 +103,8 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.vertical-only {
+    resize: vertical !important;
 }
 </style>
