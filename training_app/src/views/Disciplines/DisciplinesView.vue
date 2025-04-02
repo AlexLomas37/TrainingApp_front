@@ -22,7 +22,11 @@ const showPopup = ref(false)
 async function fetchDisciplines() {
     loading.value = true
     try {
-        const response = await fetch('/api/disciplines')
+        // Utilise l'URL de l'API depuis la variable d'environnement si définie
+        const apiUrl = import.meta.env.VITE_API_URL 
+            ? `${import.meta.env.VITE_API_URL}/disciplines`
+            : '/api/disciplines'
+        const response = await fetch(apiUrl)
         if (!response.ok) {
             throw new Error('Erreur lors de la récupération des données')
         }
