@@ -46,18 +46,20 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
 import GenericButton from '@/components/utils/GenericButton.vue';
 import TrainingItem from '@/components/TrainingItem.vue';
 import ExerciceView from '@/views/ExerciceView.vue';
-import AddExerciceItem from '@/components/AddExerciceItem.vue'; // added import
+import AddExerciceItem from '@/components/AddExerciceItem.vue';
+
+// Constante globale pour l'API
+const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
 export default {
     components: {
         GenericButton,
         TrainingItem,
         ExerciceView,
-        AddExerciceItem // registered component
+        AddExerciceItem
     },
     setup() {
         const route = useRoute();
@@ -65,13 +67,17 @@ export default {
         const training = ref(null);
         const showPopup = ref(false);
         const selectedExercice = ref(null);
-        const showAddExercicePopup = ref(false); // added variable
+        const showAddExercicePopup = ref(false);
 
         const fetchTraining = async () => {
+            const id = route.params.id;
+            const apiUrl = `${BASE_API_URL}/trainings/${id}`;
             try {
-                const id = route.params.id;
-                const response = await axios.get(`/api/trainings/${id}`);
-                training.value = response.data;
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Error fetching training');
+                }
+                training.value = await response.json();
 
                 console.log('Training data:', training.value);
             } catch (error) {
@@ -84,15 +90,14 @@ export default {
         };
 
         const addExercise = () => {
-            showAddExercicePopup.value = true; // changed code
+            showAddExercicePopup.value = true;
         };
 
         const closeAddExercicePopup = () => {
-            showAddExercicePopup.value = false; // new method
+            showAddExercicePopup.value = false;
         };
 
         const handleExerciceAdded = (newExercice) => {
-            // Ajout de l'exercice soumis à l'entraînement
             if (!training.value.exercices) {
                 training.value.exercices = [];
             }

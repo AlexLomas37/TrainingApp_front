@@ -2,21 +2,23 @@
 import { ref } from 'vue';
 import GenericButton from '@/components/utils/GenericButton.vue';
 
+// Constante globale pour l'API
+const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
+
 const props = defineProps<{ disciplineId: number }>();
 const emit = defineEmits(['close']);
 const message = ref('');
 
 function handleSubmit(e: Event) {
-  e.preventDefault();
-  const target = e.target as HTMLFormElement;
-  const formData = new FormData(target);
-  const trainingName = formData.get('trainingName');
-  const trainingDescription = formData.get('trainingDescription');
-  const trainingDuration = formData.get('trainingDuration');
-
-  console.log(props.disciplineId);
-  message.value = '';
-  fetch('/api/trainings', {
+  e.preventDefault()
+  const target = e.target as HTMLFormElement
+  const formData = new FormData(target)
+  const trainingName = formData.get('trainingName')
+  const trainingDescription = formData.get('trainingDescription')
+  const trainingDuration = formData.get('trainingDuration')
+  message.value = ''
+  const apiUrl = `${BASE_API_URL}/trainings`
+  fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -30,17 +32,16 @@ function handleSubmit(e: Event) {
   })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Échec de l\'ajout du training');
+        throw new Error('Échec de l\'ajout du training')
       }
-      return response.json();
+      return response.json()
     })
     .then(data => {
-      // Rafraîchit la page au lieu d’afficher un message et fermer la popup
-      window.location.reload();
+      window.location.reload()
     })
     .catch(error => {
-      console.error('Error:', error);
-    });
+      console.error('Error:', error)
+    })
 }
 </script>
 

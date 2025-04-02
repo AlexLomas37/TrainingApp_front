@@ -1,16 +1,17 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
-import CardItem from '@/components/utils/CardItem.vue';
 import GenericButton from '@/components/utils/GenericButton.vue';
+import CardItem from '@/components/utils/CardItem.vue';
 import AddTrainingItem from '@/components/AddTrainingItem.vue';
+
+const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
 export default {
     components: {
-        CardItem,
         GenericButton,
-        AddTrainingItem
+        CardItem,
+        AddTrainingItem,
     },
     setup() {
         const route = useRoute();
@@ -20,23 +21,32 @@ export default {
         const editing = ref(false);
 
         const fetchDiscipline = async () => {
+            const id = route.params.id;
+            const apiUrl = `${BASE_API_URL}/disciplines/${id}`;
             try {
-                const id = route.params.id;
-                const response = await axios.get(`/api/disciplines/${id}`);
-                discipline.value = response.data;
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération de la discipline');
+                }
+                discipline.value = await response.json();
+                console.log('Discipline data:', discipline.value);
             } catch (error) {
                 console.error('Error fetching discipline:', error);
             }
         };
 
-        const modifyDiscipline = () => {
-            editing.value = true;
-        };
-
         const saveDiscipline = async () => {
+            const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value.id}`;
             try {
-                const response = await axios.put(`/api/disciplines/${discipline.value.id}`, discipline.value);
-                discipline.value = response.data;
+                const response = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(discipline.value)
+                });
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la sauvegarde de la discipline');
+                }
+                discipline.value = await response.json();
                 editing.value = false;
             } catch (error) {
                 console.error('Error saving discipline:', error);
@@ -45,8 +55,12 @@ export default {
 
         const deleteDiscipline = async () => {
             if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette discipline ?')) return;
+            const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value.id}`;
             try {
-                await axios.delete(`/api/disciplines/${discipline.value.id}`);
+                const response = await fetch(apiUrl, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la suppression de la discipline');
+                }
                 router.push('/disciplines');
             } catch (error) {
                 console.error('Error deleting discipline:', error);
@@ -65,7 +79,7 @@ export default {
             discipline,
             showPopup,
             editing,
-            modifyDiscipline,
+            modifyDiscipline: () => (editing.value = true),
             saveDiscipline,
             deleteDiscipline,
             goToTraining
@@ -98,6 +112,7 @@ export default {
                 <!-- Affichage statique -->
                 <p>{{ discipline.name }}</p>
                 <p>{{ discipline.description }}</p>
+                <p>Nombre d'entraînements : {{ discipline.trainings ? discipline.trainings.length : 0 }}</p>
             </div>
             <div class="training-header">
                 <h2>Liste des entraînements associés à cette discipline :</h2>
