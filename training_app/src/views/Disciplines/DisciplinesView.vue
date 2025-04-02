@@ -22,10 +22,11 @@ const showPopup = ref(false)
 async function fetchDisciplines() {
     loading.value = true
     try {
-        // Utilise l'URL de l'API depuis la variable d'environnement si définie
-        const apiUrl = import.meta.env.VITE_API_URL 
-            ? `${import.meta.env.VITE_API_URL}/disciplines`
-            : '/api/disciplines'
+        // In development use the proxy route to avoid CORS. In production, use the env variable.
+        const apiUrl = import.meta.env.DEV 
+            ? '/api/disciplines'
+            : `${import.meta.env.VITE_API_URL}/disciplines`
+        console.log("API URL:", apiUrl)  // pour debug
         const response = await fetch(apiUrl)
         if (!response.ok) {
             throw new Error('Erreur lors de la récupération des données')
