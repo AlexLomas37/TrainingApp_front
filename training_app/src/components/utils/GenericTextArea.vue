@@ -1,7 +1,7 @@
 <template>
   <textarea
     :value="modelValue"
-    @input="$emit('update:modelValue', $event.target.value)"
+    @input="handleInput"
     :placeholder="placeholder"
     :rows="rows"
     :cols="cols"
@@ -24,9 +24,14 @@ const props = defineProps<{
   maxHeight?: string;
   backgroundColor?: string;
 }>();
-defineEmits<{
+const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
+
+function handleInput(event: Event) {
+  const target = event.target as HTMLTextAreaElement | null;
+  emit('update:modelValue', target ? target.value : '');
+}
 
 const computedStyle = computed(() => ({
   minWidth: props.minWidth || 'auto',
