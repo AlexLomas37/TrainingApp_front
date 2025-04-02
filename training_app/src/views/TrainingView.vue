@@ -36,8 +36,6 @@
             <div class="popup-content">
                 <AddExerciceItem :trainingId="training.id" @exercice-added="handleExerciceAdded"
                     @close="closeAddExercicePopup" />
-                <GenericButton desktopText="Fermer" mobileText="Fermer" color="#f44336" type="button"
-                    @click="closeAddExercicePopup" />
             </div>
         </div>
     </div>
