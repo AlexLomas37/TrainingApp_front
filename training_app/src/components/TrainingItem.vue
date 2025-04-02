@@ -2,7 +2,11 @@
     <div class="card">
         <div class="card-body">
             <h3 class="card-title">{{ exerciseName }}</h3>
-            <p class="card-text">{{ time }}</p>
+            <p class="card-text">
+                <span v-if="time">{{ time + " min" }}</span>
+                <span v-if="time && repetitions"> - </span>
+                <span v-if="repetitions">{{ repetitions }}</span>
+            </p>
         </div>
     </div>
 </template>
@@ -16,6 +20,10 @@ export default {
             required: true
         },
         time: {
+            type: String,
+            required: true
+        },
+        repetitions: {
             type: String,
             required: true
         }
