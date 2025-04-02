@@ -89,11 +89,11 @@ export default {
 </script>
 
 <template>
-    <div class="container">
+    <main>
         <div v-if="discipline">
-            <!-- Conteneur header modifié -->
-            <div class="discipline-header">
-                <h1>Discipline</h1>
+            <!-- Remplacement de discipline-header par header-container -->
+            <div class="header-container">
+                <h1>{{ discipline.name }}</h1>
                 <GenericButton v-if="!editing" desktopText="Modifier" mobileText="M" color="#2196f3" type="button"
                     @click="modifyDiscipline" />
             </div>
@@ -110,11 +110,11 @@ export default {
             </div>
             <div v-else>
                 <!-- Affichage statique -->
-                <p>{{ discipline.name }}</p>
                 <p>{{ discipline.description }}</p>
                 <p>Nombre d'entraînements : {{ discipline.trainings ? discipline.trainings.length : 0 }}</p>
             </div>
-            <div class="training-header">
+            <!-- Remplacement du training-header par header-container -->
+            <div class="header-container">
                 <h2>Liste des entraînements associés à cette discipline :</h2>
                 <GenericButton desktopText="Ajouter un entraînement" mobileText="+" color="#4caf50" type="button"
                     @click="showPopup = true" />
@@ -146,11 +146,11 @@ export default {
         </div>
         <GenericButton desktopText="Retour" mobileText="Retour" color="#4caf50" type="button"
             @click="$router.push('/disciplines')" />
-    </div>
+    </main>
 </template>
 
 <style scoped>
-/* Ajout des styles pour popup */
+/* Styles pour popup */
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -170,16 +170,39 @@ export default {
     align-items: center;
 }
 
-.discipline-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.training-header {
+.header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.header-container h2 {
+    margin: 0;
+    line-height: 45px;
+}
+
+.header-container button {
+    margin-top: 0;
+}
+
+.desktop-text {
+    display: inline;
+}
+
+.mobile-text {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .desktop-text {
+        display: none;
+    }
+
+    .mobile-text {
+        display: inline;
+    }
 }
 
 .cards-container {
@@ -187,21 +210,60 @@ export default {
     flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
-    justify-content: space-evenly;
-    align-self: center;
+    justify-content: center; /* Centrage des cartes */
 }
 
-.buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+/* New styles for popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    background-color: #4caf50;
+    border-radius: 8px;
+    border: 1px solid #388e3c;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    height: 45px;
+    margin-top: 20px;
+    outline: none;
+    text-align: center;
+    width: auto;
+    padding: 0 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #388e3c;
+    transform: scale(0.95);
+}
+
+main h1 {
+    margin-bottom: 10px;
+}
+
+main p {
+    margin-bottom: 20px;
 }
 </style>
