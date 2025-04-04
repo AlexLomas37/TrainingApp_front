@@ -17,6 +17,12 @@
             <h3>Description</h3>
             <p class="card-text">{{ exercice.description }}</p>
             <h3>Informations</h3>
+            <h3>Statistiques récoltés</h3>
+            <ul>
+                <li v-for="(stat, index) in exercice.statisticsMap" :key="index">
+                    {{ index + " en " + stat }}
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -59,8 +65,10 @@ export default {
 
 .card-header {
     display: flex;
-    align-items: center;              /* vertically centers the title and button */
-    justify-content: center;          /* centers the title horizontally */
+    align-items: center;
+    /* vertically centers the title and button */
+    justify-content: center;
+    /* centers the title horizontally */
     border-bottom: 1px solid #ccc;
     padding: 10px 20px;
     margin-bottom: 15px;
@@ -69,9 +77,11 @@ export default {
 
 .close-btn {
     position: absolute;
-    top: 50%;                         /* center vertically */
+    top: 50%;
+    /* center vertically */
     right: 10px;
-    transform: translateY(-50%);      /* adjust for perfect centering */
+    transform: translateY(-50%);
+    /* adjust for perfect centering */
     background: transparent;
     border: none;
     font-size: 1.2rem;
