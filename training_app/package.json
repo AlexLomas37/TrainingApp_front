@@ -17,10 +17,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "apexcharts": "^4.5.0",
     "pinia": "^3.0.1",
     "training_app": "file:",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue3-apexcharts": "^1.8.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
@@ -42,10 +44,12 @@
     "npm-run-all2": "^7.0.2",
     "prettier": "3.5.3",
     "start-server-and-test": "^2.0.10",
+    "tippy.js": "^6.3.7",
     "typescript": "~5.8.0",
     "vite": "^6.2.1",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vitest": "^3.0.8",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^2.2.8",
+    "vue3-calendar-heatmap": "^2.0.5"
   }
 }
