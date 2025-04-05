@@ -2,11 +2,10 @@
     <div class="card">
         <div class="card-body">
             <h3 class="card-title">{{ exerciseName }}</h3>
-            <p class="card-text">
-                <span v-if="time">{{ time + " min" }}</span>
-                <span v-if="time && repetitions"> - </span>
-                <span v-if="repetitions">{{ repetitions }}</span>
-            </p>
+            <div class="card-text">
+                <span v-if="time"><span class="material-symbols-outlined md-36">timer</span> {{ time + " min" }}</span>
+                <span v-if="repetitions"><span class="material-symbols-outlined">laps</span> {{ repetitions }}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -40,6 +39,12 @@ export default {
     margin: 0.5rem;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card-text span {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
 }
 
 .card:hover {
