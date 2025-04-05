@@ -2,10 +2,10 @@
 import { ref, onMounted } from 'vue'
 
 interface Discipline {
-  id: number
-  name: string
-  description: string
-  // ...other fields if any...
+    id: number
+    name: string
+    description: string
+    // ...other fields if any...
 }
 
 import CardItem from '@/components/utils/CardItem.vue'
@@ -23,7 +23,7 @@ async function fetchDisciplines() {
     loading.value = true
     try {
         // In development use the proxy route to avoid CORS. In production, use the env variable.
-        const apiUrl = import.meta.env.DEV 
+        const apiUrl = import.meta.env.DEV
             ? '/api/disciplines'
             : `${import.meta.env.VITE_API_URL}/disciplines`
         console.log("API URL:", apiUrl)  // pour debug
@@ -57,12 +57,8 @@ onMounted(() => {
         <p>Cette page rassemble toutes nos disciplines</p>
         <div class="header-container">
             <h2>Vos disciplines</h2>
-            <GenericButton 
-              desktopText="Ajouter une discipline" 
-              mobileText="+" 
-              color="#4caf50" 
-              type="button" 
-              @click="showPopup = true" />
+            <GenericButton desktopText="Ajouter une discipline" mobileText="+" color="#4caf50" type="button"
+                @click="showPopup = true" />
         </div>
 
         <!-- Popup overlay -->
@@ -84,9 +80,7 @@ onMounted(() => {
                 <template v-if="apiData.length === 0">
                     <p>Aucune discipline disponible pour le moment.</p>
                 </template>
-                <CardItem 
-                    v-for="(discipline, index) in apiData" 
-                    :key="index" 
+                <CardItem v-for="(discipline, index) in apiData" :key="index"
                     :redirectLink="`/discipline/${discipline.id}`">
                     <template #header>
                         <h3>{{ discipline.name }}</h3>
@@ -141,7 +135,8 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
-    justify-content: center; /* Centrage des cartes */
+    justify-content: center;
+    /* Centrage des cartes */
 }
 
 /* New styles for popup */
