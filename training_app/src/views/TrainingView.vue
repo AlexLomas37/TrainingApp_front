@@ -1,9 +1,15 @@
 <template>
     <div class="container">
         <div v-if="training">
-            <h1>{{ training.name }}</h1>
-            <p>{{ training.description }}</p>
-            <!-- Nouveau container pour le titre et le bouton -->
+            <div class="header-flex">
+                <div class="training-info">
+                    <h1>{{ training.name }}</h1>
+                    <p>{{ training.description }}</p>
+                </div>
+                <div class="calendar-container">
+                    <calendar-heatmap dark-mode :values="parseTrainingStats(trainingStats)" :end-date="endDate" :round="3" :max="1" style="width: 500px;" />
+                </div>
+            </div>
             <div class="header-container">
                 <h2>Liste des exercices</h2>
                 <GenericButton desktopText="Ajouter un exercice" mobileText="+" color="#4caf50" type="button"
@@ -25,7 +31,13 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView :exercice="selectedExercice" @close="closePopup" style="width: 100%; height: 100%;" />
+                <ExerciceView 
+                    :exercice="selectedExercice" 
+                    :chartOptions="chartOptions" 
+                    :chartSeries="chartSeries" 
+                    @close="closePopup" 
+                    style="width: 100%; height: 100%;" 
+                />
             </div>
         </div>
 
@@ -46,6 +58,8 @@ import GenericButton from '@/components/utils/GenericButton.vue';
 import TrainingItem from '@/components/TrainingItem.vue';
 import ExerciceView from '@/views/ExerciceView.vue';
 import AddExerciceItem from '@/components/AddExerciceItem.vue';
+import { CalendarHeatmap } from 'vue3-calendar-heatmap';
+import 'vue3-calendar-heatmap/dist/style.css';
 
 // Constante globale pour l'API
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
@@ -55,15 +69,36 @@ export default {
         GenericButton,
         TrainingItem,
         ExerciceView,
-        AddExerciceItem
+        AddExerciceItem,
+        CalendarHeatmap,
     },
     setup() {
         const route = useRoute();
         const router = useRouter();
         const training = ref(null);
+        const trainingStats = ref(null);
         const showPopup = ref(false);
         const selectedExercice = ref(null);
         const showAddExercicePopup = ref(false);
+        const now = new Date();
+        const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+        const chartSeries = ref([
+            {
+                name: 'Statistiques',
+                data: [30, 40, 35, 60, 65, 50, 70],
+            },
+        ]);
+
+        const chartOptions = ref({
+            stroke: {
+                curve: 'smooth',
+            },
+            xaxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            },
+        });
 
         const fetchTraining = async () => {
             const id = route.params.id;
@@ -74,11 +109,36 @@ export default {
                     throw new Error('Error fetching training');
                 }
                 training.value = await response.json();
-
                 console.log('Training data:', training.value);
             } catch (error) {
                 console.error('Error fetching training:', error);
             }
+        };
+
+        const fetchTrainingStats = async () => {
+            const id = route.params.id;
+            const apiUrl = `${BASE_API_URL}/statistics/trainings/matrix?training=${id}&startDate=${startDate}&endDate=${endDate}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Error fetching training stats');
+                }
+                const data = await response.json();
+                console.log('Training stats data:', data);
+                trainingStats.value = data;
+                console.log('Parsed training stats:', parseTrainingStats(data));
+            } catch (error) {
+                console.error('Error fetching training stats:', error);
+            }
+        };
+
+        const parseTrainingStats = (stats) => {
+            if (!stats) return []; // Added null check
+            // Transforme un objet du type { "2025-03-31": false } en tableau [{ date: '2025-03-31', count: 1 }]
+            return Object.entries(stats).map(([date, value]) => ({
+                date,
+                count: value === false ? 0 : 1
+            }));
         };
 
         const goBack = () => {
@@ -112,9 +172,10 @@ export default {
 
         onMounted(() => {
             fetchTraining();
+            fetchTrainingStats();
         });
 
-        return { training, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded };
+        return { training, trainingStats, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded, parseTrainingStats, endDate, chartOptions, chartSeries };
     },
 };
 </script>
@@ -132,8 +193,12 @@ export default {
 }
 
 .container {
-    width: 100vw;
+    width: 100%;
     margin: 0 auto;
+    box-sizing: border-box;
+    /* include padding in width calculation */
+    padding: 0 20px;
+    /* adjust horizontal padding as needed */
 }
 
 .popup-overlay {
@@ -155,5 +220,24 @@ export default {
     border-radius: 15px;
     max-width: 800px;
     width: 90%;
+}
+
+.header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* center all content horizontally */
+}
+
+.training-info {
+    margin-right: 20px;
+    /* space between training info and calendar */
+}
+
+.calendar-container {
+    flex: 1;
+    display: flex;
+    justify-content: right;
+    align-items: center;
 }
 </style>
