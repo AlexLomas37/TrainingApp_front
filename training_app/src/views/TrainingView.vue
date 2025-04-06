@@ -12,7 +12,7 @@
             </div>
             <div class="header-container">
                 <h2>Liste des exercices</h2>
-                <GenericButton desktopText="Ajouter un exercice" mobileText="+" color="#4caf50" type="button"
+                <GenericButton icon="add" desktopText="Ajouter un exercice" color="#4caf50" type="button"
                     @click="addExercise" />
             </div>
             <div v-if="training.exercices && training.exercices.length">
@@ -22,7 +22,10 @@
             <div v-else>
                 <p>Aucun exercice trouvé.</p>
             </div>
-            <GenericButton desktopText="Retour" mobileText="Retour" color="#4caf50" type="button" @click="goBack" />
+            <div style="display: flex; align-items: center;">
+                <GenericButton icon="arrow_back" desktopText="Retour" mobileText="Retour" color="rgb(46, 46, 46)" type="button" @click="goBack" />
+                <GenericButton icon="fitness_center" desktopText="S'entrainer sur cet exercice" mobileText="S'entrainer" type="button" />
+            </div>
         </div>
         <div v-else>
             Chargement en cours...
