@@ -7,11 +7,11 @@
         </div>
         <div class="card-body">
             <div style="display: flex; align-items: center; margin-bottom: 1em;">
-                <span style="margin-right: 20px;">
+                <span v-if="exercice.time > 0" style="margin-right: 20px;">
                     <span class="material-symbols-outlined md-36">timer</span>
                     {{ exercice.time }} min
                 </span>
-                <span>
+                <span v-if="exercice.repetitions > 1">
                     <span class="material-symbols-outlined">laps</span>
                     {{ exercice.repetitions }}
                 </span>
