@@ -94,7 +94,7 @@ export default {
             <!-- Remplacement de discipline-header par header-container -->
             <div class="header-container">
                 <h1>{{ discipline.name }}</h1>
-                <GenericButton v-if="!editing" desktopText="Modifier" mobileText="M" color="#2196f3" type="button"
+                <GenericButton v-if="!editing" icon="edit" desktopText="Modifier" color="#2196f3" type="button"
                     @click="modifyDiscipline" />
             </div>
             <div v-if="editing">
@@ -102,9 +102,9 @@ export default {
                 <input type="text" v-model="discipline.name" />
                 <textarea v-model="discipline.description"></textarea>
                 <div class="buttons">
-                    <GenericButton desktopText="Sauvegarder" mobileText="S" color="#2196f3" type="button"
+                    <GenericButton icon="save" desktopText="Sauvegarder" color="#2196f3" type="button"
                         @click="saveDiscipline" />
-                    <GenericButton desktopText="Supprimer" mobileText="Suppr" color="#f44336" type="button"
+                    <GenericButton icon="delete" desktopText="Supprimer" color="#f44336" type="button"
                         @click="deleteDiscipline" />
                 </div>
             </div>
@@ -116,7 +116,7 @@ export default {
             <!-- Remplacement du training-header par header-container -->
             <div class="header-container">
                 <h2>Liste des entraînements associés à cette discipline :</h2>
-                <GenericButton desktopText="Ajouter un entraînement" mobileText="+" color="#4caf50" type="button"
+                <GenericButton icon="add" desktopText="Ajouter un entraînement" color="#4caf50" type="button"
                     @click="showPopup = true" />
             </div>
             <div v-if="discipline.trainings && discipline.trainings.length" class="cards-container">
@@ -138,13 +138,12 @@ export default {
         <div v-else>
             Chargement...
         </div>
-        <!-- Popup overlay pour ajouter un entraînement -->
         <div v-if="showPopup" class="popup-overlay">
             <div class="popup-content">
                 <AddTrainingItem :disciplineId="discipline.id" @close="showPopup = false" />
             </div>
         </div>
-        <GenericButton desktopText="Retour" mobileText="Retour" color="#4caf50" type="button"
+        <GenericButton icon="arrow_back" desktopText="Retour" color="rgb(46, 46, 46)" type="button"
             @click="$router.push('/disciplines')" />
     </main>
 </template>
@@ -231,32 +230,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-button {
-    background-color: #4caf50;
-    border-radius: 8px;
-    border: 1px solid #388e3c;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    height: 45px;
-    margin-top: 20px;
-    outline: none;
-    text-align: center;
-    width: auto;
-    padding: 0 20px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
-}
-
-button:active {
-    background-color: #388e3c;
-    transform: scale(0.95);
 }
 
 main h1 {

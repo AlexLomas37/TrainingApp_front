@@ -43,7 +43,7 @@
             </div>
             <br />
             <div class="button-container">
-                <GenericButton type="button" color="red" desktopText="Fermer" mobileText="Fermer" @click="closePopup" />
+                <GenericButton type="button" color="rgb(46, 46, 46)" desktopText="Fermer" mobileText="Fermer" @click="closePopup" />
                 <GenericButton type="submit" icon="add" desktopText="Ajouter l'exercice" />
             </div>
         </form>

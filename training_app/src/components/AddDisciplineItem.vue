@@ -59,7 +59,7 @@ function handleSubmit(e: Event) {
         <div class="button-container">
           <GenericButton desktopText="Fermer" mobileText="Fermer" color="rgb(46, 46, 46)" type="button"
             @click="$emit('close')" />
-          <GenericButton desktopText="Ajouter" mobileText="Ajouter" color="#08d" type="submit" />
+          <GenericButton icon="add" desktopText="Ajouter" color="#4caf50" type="submit" />
         </div>
       </form>
     </div>

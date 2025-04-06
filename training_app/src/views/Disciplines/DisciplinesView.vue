@@ -57,7 +57,7 @@ onMounted(() => {
         <p>Cette page rassemble toutes nos disciplines</p>
         <div class="header-container">
             <h2>Vos disciplines</h2>
-            <GenericButton desktopText="Ajouter une discipline" mobileText="+" color="#4caf50" type="button"
+            <GenericButton icon="add" desktopText="Ajouter une discipline" color="#4caf50" type="button"
                 @click="showPopup = true" />
         </div>
 
