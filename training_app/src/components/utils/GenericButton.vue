@@ -3,6 +3,7 @@ import type { PropType } from 'vue'
 const props = defineProps({
   desktopText: { type: String, default: '' },
   mobileText: { type: String, default: '' },
+  icon: { type: String, default: '' },
   color: { type: String, default: '#4caf50' },
   type: { type: String as PropType<'button' | 'submit' | 'reset'>, default: 'button' },
   textColor: { type: String, default: '#fff' } // nouveau prop pour la couleur du texte
@@ -14,7 +15,8 @@ function handleClick(event: Event) {
 </script>
 
 <template>
-  <button :type="type" @click="handleClick" :style="{ backgroundColor: color }">
+  <button :type="type" @click="handleClick" :style="{ backgroundColor: color, display: 'flex', alignItems: 'center' }">
+    <span class="material-symbols-outlined" :style="{ color: textColor }">{{ icon }}</span>
     <span class="desktop-text" :style="{ color: textColor }">{{ desktopText }}</span>
     <span class="mobile-text" :style="{ color: textColor }">{{ mobileText }}</span>
   </button>
