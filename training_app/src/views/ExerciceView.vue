@@ -25,7 +25,7 @@
                     {{ index + " en " + stat }}
                 </li>
             </ul>
-            <div class="graphs-container">
+            <div v-if="Object.keys(parsedStatistics).length > 0" class="graphs-container">
                 <div v-for="(stat, key) in parsedStatistics" :key="key" class="graph-item">
                     <h3>{{ key }}</h3>
                     <apexchart
@@ -37,6 +37,9 @@
                         :series="[{ name: key, data: stat.series.flat() }]"
                     />
                 </div>
+            </div>
+            <div v-else>
+                <p>Aucune statistique disponible pour cet exercice.</p>
             </div>
         </div>
     </div>
@@ -103,6 +106,7 @@ export default {
                 const data = await response.json();
                 statistics.value = data;
                 parsedStatistics.value = parseStatistics(data);
+                console.log(response)
                 console.log('Parsed Statistics:', parsedStatistics.value);
             } catch (error) {
                 console.error('Error fetching statistics:', error);
