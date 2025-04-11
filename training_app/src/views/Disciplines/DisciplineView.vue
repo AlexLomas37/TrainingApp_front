@@ -1,119 +1,122 @@
-<script>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import GenericButton from '@/components/utils/GenericButton.vue';
 import CardItem from '@/components/utils/CardItem.vue';
 import AddTrainingItem from '@/components/AddTrainingItem.vue';
+import GenericInput from '@/components/utils/GenericInput.vue';
+import GenericTextArea from '@/components/utils/GenericTextArea.vue';
+import EditButtons from '@/components/utils/EditButtons.vue';
+import type { Discipline } from '@/models/Discipline'
+import type { Training } from '@/models/Training'
 
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
-export default {
-    components: {
-        GenericButton,
-        CardItem,
-        AddTrainingItem,
-    },
-    setup() {
-        const route = useRoute();
-        const router = useRouter();
-        const discipline = ref(null);
-        const showPopup = ref(false);
-        const editing = ref(false);
+const route = useRoute();
+const router = useRouter();
+const discipline = ref<Discipline>();
+const originalDiscipline = ref<Discipline>();
+const showPopup = ref(false);
+const editing = ref(false);
+const showDeletePopup = ref(false);
 
-        const fetchDiscipline = async () => {
-            const id = route.params.id;
-            const apiUrl = `${BASE_API_URL}/disciplines/${id}`;
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération de la discipline');
-                }
-                discipline.value = await response.json();
-                console.log('Discipline data:', discipline.value);
-            } catch (error) {
-                console.error('Error fetching discipline:', error);
-            }
-        };
-
-        const saveDiscipline = async () => {
-            const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value.id}`;
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(discipline.value)
-                });
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la sauvegarde de la discipline');
-                }
-                discipline.value = await response.json();
-                editing.value = false;
-            } catch (error) {
-                console.error('Error saving discipline:', error);
-            }
-        };
-
-        const deleteDiscipline = async () => {
-            if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette discipline ?')) return;
-            const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value.id}`;
-            try {
-                const response = await fetch(apiUrl, { method: 'DELETE' });
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la suppression de la discipline');
-                }
-                router.push('/disciplines');
-            } catch (error) {
-                console.error('Error deleting discipline:', error);
-            }
-        };
-
-        const goToTraining = (training) => {
-            router.push(`/training/${training.id}`);
-        };
-
-        onMounted(() => {
-            fetchDiscipline();
-        });
-
-        return {
-            discipline,
-            showPopup,
-            editing,
-            modifyDiscipline: () => (editing.value = true),
-            saveDiscipline,
-            deleteDiscipline,
-            goToTraining
-        };
-    },
+async function fetchDiscipline() {
+    const id = route.params.id;
+    const apiUrl = `${BASE_API_URL}/disciplines/${id}`;
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération de la discipline');
+        }
+        const data = await response.json();
+        discipline.value = data;
+        originalDiscipline.value = JSON.parse(JSON.stringify(data));
+        console.log('Discipline data:', discipline.value);
+    } catch (error) {
+        console.error('Error fetching discipline:', error);
+    }
 };
+
+async function saveDiscipline() {
+    const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value!.id}`;
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: discipline.value!.name,
+                description: discipline.value!.description
+            })
+        });
+        if (!response.ok) {
+            throw new Error('Erreur lors de la sauvegarde de la discipline');
+        }
+        discipline.value = await response.json();
+        editing.value = false;
+    } catch (error) {
+        console.error('Error saving discipline:', error);
+    }
+};
+
+function cancelEdit() {
+    discipline.value = JSON.parse(JSON.stringify(originalDiscipline.value));
+    editing.value = false;
+};
+
+function openDeletePopup() {
+    showDeletePopup.value = true;
+}
+
+function closeDeletePopup() {
+    showDeletePopup.value = false;
+}
+
+function modifyDiscipline() {
+    editing.value = true;
+}
+
+async function confirmDelete() {
+    closeDeletePopup();
+    const apiUrl = `${BASE_API_URL}/disciplines/${discipline.value!.id}`;
+    try {
+        const response = await fetch(apiUrl, { method: 'DELETE' });
+        if (!response.ok) {
+            throw new Error('Erreur lors de la suppression de la discipline');
+        }
+        router.push('/disciplines');
+    } catch (error) {
+        console.error('Error deleting discipline:', error);
+    }
+}
+
+function goToTraining(training: Training) {
+    router.push(`/training/${training.id}`);
+}
+
+onMounted(() => {
+    fetchDiscipline();
+});
 </script>
 
 <template>
     <main>
         <div v-if="discipline">
-            <!-- Remplacement de discipline-header par header-container -->
-            <div class="header-container">
-                <h1>{{ discipline.name }}</h1>
-                <GenericButton v-if="!editing" icon="edit" desktopText="Modifier" color="#2196f3" type="button"
-                    @click="modifyDiscipline" />
-            </div>
             <div v-if="editing">
-                <!-- Champs éditables en mode édition -->
-                <input type="text" v-model="discipline.name" />
-                <textarea v-model="discipline.description"></textarea>
-                <div class="buttons">
-                    <GenericButton icon="save" desktopText="Sauvegarder" color="#2196f3" type="button"
-                        @click="saveDiscipline" />
-                    <GenericButton icon="delete" desktopText="Supprimer" color="#f44336" type="button"
-                        @click="deleteDiscipline" />
+                <div class="header-container">
+                    <GenericInput v-model="discipline.name" label="Nom de la discipline" />
+                    <EditButtons :onSave="saveDiscipline" :onCancel="cancelEdit" :onDelete="openDeletePopup" />
                 </div>
+                <GenericTextArea v-model="discipline.description" label="Description" type="textarea" />
             </div>
             <div v-else>
-                <!-- Affichage statique -->
+                <div class="header-container">
+                    <h1>{{ discipline.name }}</h1>
+                    <GenericButton icon="edit" desktopText="Modifier" color="#2196f3" type="button"
+                    @click="modifyDiscipline" />
+                </div>
                 <p>{{ discipline.description }}</p>
                 <p>Nombre d'entraînements : {{ discipline.trainings ? discipline.trainings.length : 0 }}</p>
             </div>
-            <!-- Remplacement du training-header par header-container -->
             <div class="header-container">
                 <h2>Liste des entraînements associés à cette discipline :</h2>
                 <GenericButton icon="add" desktopText="Ajouter un entraînement" color="#4caf50" type="button"
@@ -126,8 +129,11 @@ export default {
                         <h2>{{ training.name }}</h2>
                     </template>
                     <template #body>
+                        <p style="display: flex; align-items: center;">
+                            <span class="material-symbols-outlined" style="margin-right: 0.5rem;">timer</span> {{
+                                training.time }} min
+                        </p>
                         <p>{{ training.description }}</p>
-                        <p>Durée : {{ training.time }} min</p>
                     </template>
                 </CardItem>
             </div>
@@ -140,7 +146,18 @@ export default {
         </div>
         <div v-if="showPopup" class="popup-overlay">
             <div class="popup-content">
-                <AddTrainingItem :disciplineId="discipline.id" @close="showPopup = false" />
+                <AddTrainingItem :disciplineId="discipline!.id" @close="showPopup = false" />
+            </div>
+        </div>
+        <div v-if="showDeletePopup" class="popup-overlay" @click.self="closeDeletePopup">
+            <div class="popup-content">
+                <p>Êtes-vous sûr de vouloir supprimer cette discipline ?</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <GenericButton icon="check" desktopText="Oui" color="#4caf50" type="button"
+                        @click="confirmDelete" />
+                    <GenericButton icon="close" desktopText="Non" color="#f44336" type="button"
+                        @click="closeDeletePopup" />
+                </div>
             </div>
         </div>
         <GenericButton icon="arrow_back" desktopText="Retour" color="rgb(46, 46, 46)" type="button"
@@ -164,9 +181,24 @@ export default {
 }
 
 .popup-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: rgb(39, 39, 39);
+    /* Add background color */
+    color: white;
+    /* Ensure text is visible on dark background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 800px;
+    width: 90%;
+}
+
+main {
+    width: 100%;
+    /* Ensure the main container spans the full width */
+    padding: 0;
+    /* Remove any default padding */
+    margin: 0;
+    /* Remove any default margin */
 }
 
 .header-container {
@@ -175,6 +207,8 @@ export default {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
+    padding: 0 20px;
+    /* Optional: Add some padding for content alignment */
 }
 
 .header-container h2 {
@@ -209,21 +243,22 @@ export default {
     flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
-    justify-content: center; /* Centrage des cartes */
+    justify-content: flex-start;
+    /* Align cards to the start */
+    padding: 0 20px;
+    /* Optional: Add padding for alignment */
 }
 
-/* New styles for popup */
 .popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
 }
 
 .popup-content {
