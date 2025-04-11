@@ -1,18 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-
-interface Discipline {
-    id: number
-    name: string
-    description: string
-    // ...other fields if any...
-}
-
+import type { Discipline } from '@/models/Discipline'
 import CardItem from '@/components/utils/CardItem.vue'
 import AddDisciplineItem from '@/components/AddDisciplineItem.vue'
 import GenericButton from '@/components/utils/GenericButton.vue'
 
-// Change ref type to Discipline[]
 const apiData = ref<Discipline[]>([])
 const error = ref(null)
 const loading = ref(true)
@@ -22,11 +14,9 @@ const showPopup = ref(false)
 async function fetchDisciplines() {
     loading.value = true
     try {
-        // In development use the proxy route to avoid CORS. In production, use the env variable.
         const apiUrl = import.meta.env.DEV
             ? '/api/disciplines'
             : `${import.meta.env.VITE_API_URL}/disciplines`
-        console.log("API URL:", apiUrl)  // pour debug
         const response = await fetch(apiUrl)
         if (!response.ok) {
             throw new Error('Erreur lors de la récupération des données')
@@ -39,10 +29,8 @@ async function fetchDisciplines() {
     }
 }
 
-// Mise à jour du gestionnaire pour utiliser la réactivité immuable
 function handleDisciplineAdded(newDiscipline: Discipline) {
     showPopup.value = false
-    console.log("Nouvelle discipline reçue:", newDiscipline)  // pour debug
     apiData.value = [...apiData.value, newDiscipline]
 }
 
