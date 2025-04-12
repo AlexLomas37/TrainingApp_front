@@ -68,40 +68,24 @@ function handleSubmit(e: Event) {
 
 <style scoped>
 .cardAddDiscipline {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--v-border-color);
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: rgb(39, 39, 39);
+  background-color: var(--color-background);
+  color: var(--v-text-primary);
   width: 100%;
   max-width: 500px;
   margin: 0;
   text-align: center;
 }
-
-.cardAddDiscipline-header {
-  position: relative;
-  height: 150px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin: 0 -16px 16px -16px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
 .separator {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-border);
+
   margin: 8px 0;
   width: calc(100% + 32px);
   margin-left: -16px;
-}
-
-.form {
-  background-color: #15172b;
-  border-radius: 20px;
-  box-sizing: border-box;
-  height: 500px;
-  padding: 20px;
-  width: 320px;
 }
 
 .input-container {
@@ -111,11 +95,9 @@ function handleSubmit(e: Event) {
 }
 
 .input {
-  background-color: #3d3d3d;
   border-radius: 12px;
   border: 0;
   box-sizing: border-box;
-  color: #eee;
   font-size: 18px;
   height: 100%;
   outline: 0;
@@ -129,49 +111,7 @@ function handleSubmit(e: Event) {
 textarea.input {
   resize: vertical;
   overflow: auto;
-  height: 150px;
-}
-
-.submit {
-  background-color: #08d;
-  border-radius: 12px;
-  border: 0;
-  box-sizing: border-box;
-  color: #eee;
-  cursor: pointer;
-  font-size: 18px;
-  height: 50px;
-  margin-top: 38px;
-  outline: 0;
-  text-align: center;
-  width: 100%;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.close {
-  background-color: rgb(46, 46, 46);
-  border-radius: 12px;
-  border: 0;
-  box-sizing: border-box;
-  color: #eee;
-  cursor: pointer;
-  font-size: 18px;
-  height: 50px;
-  margin-top: 38px;
-  outline: 0;
-  text-align: center;
-  width: 100%;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.submit:hover,
-.close:hover {
-  transform: scale(1.05);
-}
-
-.submit:active,
-.close:active {
-  transform: scale(0.95);
+  height: 200px;
 }
 
 .button-container {
