@@ -20,7 +20,7 @@
             </div>
             <div>
                 <label for="exRep">Nombre de répétitions :</label>
-                <GenericInput v-model="exercice.repetition" type="number" placeholder="Nombre de répétitions"
+                <GenericInput v-model="exercice.repetitions" type="number" placeholder="Nombre de répétitions"
                     style="width: 100%;" />
             </div>
             <div>
@@ -30,7 +30,7 @@
                     <GenericButton type="button" icon="docs_add_on" @click="addStatistique" style="margin-left: auto;"/>
                 </div>
                 <div id="stats-container" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                    <div v-for="(stat, index) in statisticsMapArray" :key="index" style="display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 10px;">
+                    <div v-for="(stat, index) in statisticsMapArray" :key="index" class="stat-row">
                         <select v-model="stat.type" style="margin: 0 10px;">
                             <option v-for="option in statisticOptions" :key="option.value" :value="option.value">
                                 {{ option.value }}
@@ -76,8 +76,8 @@ export default {
             exercice: {
                 name: '',
                 description: '',
-                time: null,
-                repetition: null
+                time: 0,
+                repetitions: 1
             },
             statisticsMapArray: [],
             statisticOptions: [] // Store options fetched from the API
@@ -119,11 +119,13 @@ export default {
                 statisticsMap
             };
 
-            if (!exerciceData.time || exerciceData.time <= 0) {
+            exerciceData.time = Number(exerciceData.time);
+            if (exerciceData.time < 0) {
                 exerciceData.time = 0;
             }
-            if (!exerciceData.repetition || exerciceData.repetition <= 0) {
-                exerciceData.repetition = 1;
+            exerciceData.repetitions = Number(exerciceData.repetitions);
+            if (exerciceData.repetitions < 1) {
+                exerciceData.repetitions = 1;
             }
 
             console.log(exerciceData);
@@ -161,7 +163,8 @@ export default {
 <style scoped>
 .card {
     padding: 1rem;
-    margin: 1rem;
+    background-color: var(--color-background);
+    border-radius: 16px;
 }
 
 .button-container {
@@ -170,7 +173,36 @@ export default {
     align-items: center;
 }
 
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    width: 100%;
+}
+
 .vertical-only {
     resize: vertical !important;
+}
+
+@media (max-width: 600px) {
+    .stat-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+    .stat-row select,
+    .stat-row input {
+        width: 50px;
+    }
+    .stat-row button {
+        margin: 0 5px;
+    }
+    .stat-row .GenericButton {
+        margin: 0 5px;
+        flex: 1 1 auto;
+    }
 }
 </style>
