@@ -18,16 +18,19 @@
             </div>
             <h3>Description</h3>
             <p class="card-text">{{ exercice.description }}</p>
+            <br>
             <h3>Informations</h3>
+            <br>
             <h3>Statistiques récoltés</h3>
             <ul>
                 <li v-for="(stat, index) in exercice.statisticsMap" :key="index">
                     {{ index + " en " + stat }}
                 </li>
             </ul>
+            <br>
             <div v-if="Object.keys(parsedStatistics).length > 0" class="graphs-container">
                 <div v-for="(stat, key) in parsedStatistics" :key="key" class="graph-item">
-                    <h3>{{ key }}</h3>
+                    <h3>{{ key }} (en {{ exercice.statisticsMap[key] }})</h3>
                     <apexchart
                         type="line"
                         :options="{
@@ -139,11 +142,11 @@ export default {
     margin: 20px auto;
     position: relative;
     box-sizing: border-box;
-    background-color: var(--v-background-base);
-    color: var(--v-text-primary);
-    border: 1px solid var(--v-border-color);
-    overflow-y: auto; /* Make the popup scrollable */
-    max-height: 90vh; /* Limit the height of the popup */
+    background-color: var(--color-background-soft);
+    border: 1px solid var(--color-border);
+    overflow-y: auto;
+    max-height: 90vh;
+    max-width: 90vw;
 }
 
 .card-header {
@@ -154,9 +157,16 @@ export default {
     padding: 10px 20px;
     margin-bottom: 15px;
     position: relative;
-    background-color: var(--v-background-secondary);
+    background-color: var(--color-background-soft);
     color: var(--v-text-primary);
-    border-bottom: 1px solid var(--v-border-color);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.card-body {
+    padding: 0 20px;
+    color: var(--v-text-primary);
+    background-color: var(--color-background-soft);
+    overflow-y: auto;
 }
 
 .close-btn {

@@ -173,8 +173,14 @@ button:active {
     transform: scale(0.95);
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
 main h1 {
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
 }
 
 main p {

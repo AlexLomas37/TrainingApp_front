@@ -1,9 +1,8 @@
 @import './base.css';
 
 #app {
-  margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
+  display: block;
 }
 
 a,
@@ -22,6 +21,7 @@ a,
 
 main {
   width: 100%;
+  padding: 10px;
 }
 
 @media (hover: hover) {
@@ -33,11 +33,5 @@ main {
 @media (min-width: 1024px) {
   body {
     display: block;
-  }
-
-  #app {
-    display: block;
-    padding: 0 2rem;
-    margin: 0 auto;
   }
 }

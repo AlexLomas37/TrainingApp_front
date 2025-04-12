@@ -43,11 +43,12 @@ export default {
 
 <style scoped>
 .card {
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, .015);
+    box-shadow: 0 4px 6px var(--color-border);
+    background-color: var(--color-background-soft);
+    color: var(--color-text);
     width: 300px;
     height: 400px;
     margin: 16px auto;
@@ -57,7 +58,8 @@ export default {
 .card-header {
     position: relative;
     height: 150px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-background-secondary);
     margin: 0 -16px 16px -16px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -87,26 +89,26 @@ export default {
 
 .card-header h3 {
     margin: 0;
-    color: #fff;
+    color: var(--color-text-primary);
 }
 
 .card:hover {
     cursor: pointer;
     transform: scale(1.03);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px var(--color-border-hover);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:not(:hover) {
     transform: scale(1);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--color-border);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-body p {
     margin: 0;
     font-size: 1rem;
-    color: #A1A1AA;
+    color: var(--color-text-secondary);
     height: 200px;
 }
 

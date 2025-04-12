@@ -44,10 +44,14 @@ const computedStyle = computed(() => ({
 
 <style scoped>
 .generic-textarea {
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-soft) !important;
+  color: var(--v-text-primary);
+  border-radius: 12px;
   border-radius: 15px;
   padding: 0.5rem;
   font-size: 1rem;
   width: 100%;
+  height: 150px;
 }
 </style>

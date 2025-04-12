@@ -52,8 +52,9 @@ export default {
 
 <style scoped>
 .card {
-    border: 1px solid rgb(43, 43, 43);
-    background-color: rgb(43, 43, 43);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background-mute);
+    color: var(--color-text-primary);
     border-radius: 15px;
     padding: 1rem;
     margin: 0.5rem;
@@ -68,10 +69,10 @@ export default {
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .card:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 </style>

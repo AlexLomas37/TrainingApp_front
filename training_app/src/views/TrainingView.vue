@@ -9,13 +9,17 @@
                             <EditButtons :onSave="saveChanges" :onCancel="cancelChanges" :onDelete="openDeletePopup" />
                         </template>
                         <template v-else>
-                            <GenericButton icon="edit" desktopText="Modifier" color="#4caf50" type="button" @click="toggleEditMode" />
+                            <GenericButton icon="edit" desktopText="Modifier" color="#4caf50" type="button"
+                                @click="toggleEditMode" />
                         </template>
                     </div>
                     <p>{{ training.description }}</p>
                 </div>
                 <div class="calendar-container">
-                    <calendar-heatmap dark-mode :values="parseTrainingStats(trainingStats)" :end-date="endDate" :round="3" :max="1" style="width: 500px;" />
+                    <div style="display: flex; flex-direction: column;">
+                        <h2>Vos derniers entrainements</h2>
+                        <calendar-heatmap dark-mode :values="parseTrainingStats(trainingStats)" :end-date="endDate" :round="3" :max="1" class="heatmap" />
+                    </div>
                 </div>
             </div>
             <div class="header-container">
@@ -23,16 +27,19 @@
                 <GenericButton icon="add" desktopText="Ajouter un exercice" color="#4caf50" type="button"
                     @click="addExercise" />
             </div>
-            <div v-if="training.exercices && training.exercices.length">    
+            <div v-if="training.exercices && training.exercices.length" class="cards-container">
                 <ExerciceItem v-for="(exercice, index) in training.exercices" :key="index" :exerciseName="exercice.name"
-                    :time="exercice.time" :repetitions="exercice.repetitions" :editMode="isEditMode" @click="openExercicePopup(exercice)" />
+                    :time="exercice.time" :repetitions="exercice.repetitions" :editMode="isEditMode"
+                    @click="openExercicePopup(exercice)" />
             </div>
             <div v-else>
                 <p>Aucun exercice trouvé.</p>
             </div>
             <div style="display: flex; align-items: center;">
-                <GenericButton icon="arrow_back" desktopText="Retour" mobileText="Retour" color="rgb(46, 46, 46)" type="button" @click="goBack" />
-                <GenericButton icon="play_arrow" desktopText="Lancer l'entrainement" mobileText="S'entrainer" type="button" @click="launchTraining" />
+                <GenericButton icon="arrow_back" desktopText="Retour" mobileText="Retour" color="rgb(46, 46, 46)"
+                    type="button" @click="goBack" />
+                <GenericButton icon="play_arrow" desktopText="Lancer l'entrainement" mobileText="S'entrainer"
+                    type="button" @click="launchTraining" />
             </div>
         </div>
         <div v-else>
@@ -42,13 +49,8 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView 
-                    :exercice="selectedExercice" 
-                    :chartOptions="chartOptions" 
-                    :chartSeries="chartSeries" 
-                    @close="closePopup" 
-                    style="width: 100%; height: 100%;" 
-                />
+                <ExerciceView :exercice="selectedExercice" :chartOptions="chartOptions" :chartSeries="chartSeries"
+                    @close="closePopup" style="width: 100%; height: 100%;" />
             </div>
         </div>
 
@@ -65,8 +67,10 @@
             <div class="popup-content">
                 <p>Êtes-vous sûr de vouloir supprimer cet entraînement ?</p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
-                    <GenericButton icon="check" desktopText="Oui" color="#4caf50" type="button" @click="confirmDelete" />
-                    <GenericButton icon="close" desktopText="Non" color="#f44336" type="button" @click="closeDeletePopup" />
+                    <GenericButton icon="check" desktopText="Oui" color="#4caf50" type="button"
+                        @click="confirmDelete" />
+                    <GenericButton icon="close" desktopText="Non" color="#f44336" type="button"
+                        @click="closeDeletePopup" />
                 </div>
             </div>
         </div>
@@ -211,7 +215,7 @@ export default {
         const createTrainingSession = async (idTraining) => {
             const trainingSession = {
                 start: new Date().toISOString(),
-                end: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(), // 1 hour later
+                end: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
                 training: {
                     id: idTraining
                 }
@@ -292,7 +296,8 @@ export default {
 .title-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between the title and the buttons */
+    gap: 10px;
+    /* Space between the title and the buttons */
 }
 
 .header-container {
@@ -306,7 +311,9 @@ export default {
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
-    padding: 0 20px; /* Adjust horizontal padding as needed */
+    padding: 20px;
+    overflow-x: visible;
+    /* Nouvelle propriété pour éviter que le contenu soit rogné */
 }
 
 .popup-overlay {
@@ -321,39 +328,47 @@ export default {
     justify-content: center;
 }
 
-.popup-content {
-    background: rgb(39, 39, 39);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 800px;
-    width: 90%;
-}
-
 .header-flex {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    flex-wrap: wrap;
+    /* Allow wrapping for smaller screens */
 }
 
 .training-info {
     margin-right: 20px;
-    flex: 1 1 auto; /* Allow the training info to take up available space */
+    flex: 1 1 auto;
+    /* Allow the training info to take up available space */
 }
 
 .calendar-container {
-    flex: 1 1 auto; /* Default behavior for larger screens */
+    flex: 1 1 auto;
+    /* Default behavior for larger screens */
     display: flex;
-    justify-content: flex-end; /* Align heatmap to the right */
+    justify-content: flex-end;
+    /* Align heatmap to the right */
     align-items: center;
-    margin-top: 20px; /* Add spacing when moved below on smaller screens */
+    margin-top: 20px;
+    /* Add spacing when moved below on smaller screens */
+}
+
+.heatmap {
+    width: 500px;
+}
+
+@media (max-width: 768px) {
+    .heatmap {
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
     .calendar-container {
-        flex: 1 1 100%; /* Move to a new row on smaller screens */
-        justify-content: center; /* Center heatmap on smaller screens */
+        flex: 1 1 100%;
+        /* Move to a new row on smaller screens */
+        justify-content: center;
+        /* Center heatmap on smaller screens */
         margin-top: 20px;
     }
 }

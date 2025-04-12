@@ -27,11 +27,12 @@ function onInput(e: Event) {
 
 <style scoped>
 .input {
-  background-color: #3d3d3d;
+  background-color: var(--color-background-mute);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   border: 0;
   box-sizing: border-box;
-  color: #eee;
+  color: var(--v-text-primary);
   font-size: 18px;
   height: 50px;
   outline: 0;

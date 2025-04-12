@@ -100,7 +100,7 @@ onMounted(() => {
 
 <template>
     <main>
-        <div v-if="discipline">
+        <div v-if="discipline" class="discipline-container">
             <div v-if="editing">
                 <div class="header-container">
                     <GenericInput v-model="discipline.name" label="Nom de la discipline" />
@@ -166,6 +166,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+.discipline-container {
+    width: 100%;
+}
 /* Styles pour popup */
 .popup-overlay {
     position: fixed;
@@ -173,7 +177,6 @@ onMounted(() => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,24 +184,16 @@ onMounted(() => {
 }
 
 .popup-content {
-    background: rgb(39, 39, 39);
-    /* Add background color */
-    color: white;
-    /* Ensure text is visible on dark background */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    box-shadow: 0 4px 8px var(--color-border);
     border-radius: 15px;
     max-width: 800px;
     width: 90%;
 }
 
 main {
-    width: 100%;
-    /* Ensure the main container spans the full width */
-    padding: 0;
-    /* Remove any default padding */
-    margin: 0;
-    /* Remove any default margin */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
 }
 
 .header-container {
