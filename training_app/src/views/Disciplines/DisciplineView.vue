@@ -123,9 +123,10 @@ onMounted(() => {
                     @click="showPopup = true" />
             </div>
             <div v-if="discipline.trainings && discipline.trainings.length" class="cards-container">
-                <CardItem v-for="(training, index) in discipline.trainings" :key="index"
+                <CardItem v-for="(training, index) in discipline.trainings" :key="index" :customLogo="training.imageLink"
                     @click="() => goToTraining(training)">
                     <template #header>
+                        <img :src="training.imageLink" alt="Logo" class="logo_front"/>
                         <h2>{{ training.name }}</h2>
                     </template>
                     <template #body>
@@ -221,6 +222,12 @@ main {
 
 .mobile-text {
     display: none;
+}
+
+.logo_front {
+    width: 100px;
+    height: auto;
+    border-radius: 15px;
 }
 
 @media (max-width: 600px) {
