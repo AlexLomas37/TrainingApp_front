@@ -55,11 +55,14 @@ function handleSubmit(e: Event) {
     <div class="card-body">
       <form @submit.prevent="handleSubmit">
         <label>Nom de l'entraînement</label>
-        <GenericInput v-model="trainingName" type="text" placeholder="Nom de l'entraînement" required style="width: 100%;" />
+        <GenericInput v-model="trainingName" type="text" placeholder="Nom de l'entraînement" required
+          style="width: 100%;" />
         <label>Description de l'entraînement</label>
-        <GenericTextArea v-model="trainingDescription" placeholder="Description de l'entraînement" required class="vertical-only" style="width: 100%;" />
+        <GenericTextArea v-model="trainingDescription" placeholder="Description de l'entraînement" required
+          class="vertical-only" style="width: 100%;" />
         <label>Durée de l'entrainement (minutes)</label>
-        <GenericInput v-model="trainingDuration" type="number" placeholder="Durée en minutes" required style="width: 100%;" />
+        <GenericInput v-model="trainingDuration" type="number" placeholder="Durée en minutes" required
+          style="width: 100%;" />
         <div v-if="message">
           <p>{{ message }}</p>
         </div>
