@@ -50,6 +50,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import { adaptExerciceStatsMap } from '@/util/adapter/AdapterStats.js';
 
 export default {
     name: "ExerciceView",
@@ -66,38 +67,13 @@ export default {
                 time: "00:00",
                 repetitions: "0",
             })
-        },
-        chartOptions: {
-            type: Object,
-            required: true,
-        },
-        chartSeries: {
-            type: Array,
-            required: true,
-        },
+        }
     },
     setup(props) {
 
         const statistics = ref([]);
         const accordionOpen = ref(false);
         const parsedStatistics = ref({});
-
-        const parseStatistics = (data) => {
-            const parsed = {};
-            const sortedDates = Object.keys(data).sort((a, b) => new Date(a) - new Date(b));
-            for (const date of sortedDates) {
-                const stats = data[date];
-                for (const [key, value] of Object.entries(stats)) {
-                    if (!parsed[key]) {
-                        parsed[key] = { categories: [], series: [] };
-                    }
-                    const values = value.split(' ; ').map(Number);
-                    parsed[key].categories.push(...Array(values.length).fill(date));
-                    parsed[key].series.push(...values);
-                }
-            }
-            return parsed;
-        };
 
         const fetchStatistics = async () => {
             try {
@@ -108,7 +84,7 @@ export default {
                 }
                 const data = await response.json();
                 statistics.value = data;
-                parsedStatistics.value = parseStatistics(data);
+                parsedStatistics.value = adaptExerciceStatsMap(data);
                 console.log(response)
                 console.log('Parsed Statistics:', parsedStatistics.value);
             } catch (error) {
@@ -123,7 +99,8 @@ export default {
         return {
             statistics,
             parsedStatistics,
-            fetchStatistics
+            fetchStatistics,
+            adaptExerciceStatsMap
         };
     },
     methods: {
