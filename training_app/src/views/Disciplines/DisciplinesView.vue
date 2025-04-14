@@ -68,9 +68,13 @@ onMounted(() => {
                 <template v-if="apiData.length === 0">
                     <p>Aucune discipline disponible pour le moment.</p>
                 </template>
-                <CardItem v-for="(discipline, index) in apiData" :key="index"
-                    :redirectLink="`/discipline/${discipline.id}`">
+                <CardItem 
+                    v-for="(discipline, index) in apiData" 
+                    :key="index"
+                    :redirectLink="`/discipline/${discipline.id}`"
+                    :customLogo="discipline.imageLink">
                     <template #header>
+                        <img :src="discipline.imageLink" name="logo" alt="Logo" class="logo_front">
                         <h3>{{ discipline.name }}</h3>
                     </template>
                     <template #body>
@@ -124,10 +128,14 @@ onMounted(() => {
     gap: 1rem;
     width: 100%;
     justify-content: center;
-    /* Centrage des cartes */
 }
 
-/* New styles for popup */
+.logo_front {
+    width: 100px;
+    height: auto;
+    border-radius: 15px;
+}
+
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -180,7 +188,7 @@ main {
 }
 
 main h1 {
-    margin-bottom: 10px;    
+    margin-bottom: 10px;
 }
 
 main p {
