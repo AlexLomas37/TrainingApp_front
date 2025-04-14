@@ -1,43 +1,40 @@
 <template>
-	<div class="card" @click="redirect"> <!-- modification: ajout du gestionnaire de clic -->
-		<div class="card-header">
-			<div>
-				<img :src="logoImage" alt="Logo" class="logo_front">
-				<slot name="header" />
-			</div>
-		</div>
-		<div class="card-body">
-			<slot name="body" />
-		</div>
-		<div class="card-footer">
-			<slot name="footer" />
-		</div>
-	</div>
+    <div class="card" @click="redirect">
+        <div class="card-header" :style="{ '--custom-logo': `url(${customLogo})` }">
+            <div>
+                <slot name="header" />
+            </div>
+        </div>
+        <div class="card-body">
+            <slot name="body" />
+        </div>
+        <div class="card-footer">
+            <slot name="footer" />
+        </div>
+    </div>
 </template>
 
 <script>
-import logoImage from '@/assets/logo.svg'
 
 export default {
-	name: 'CardItem',
-	props: {
-		redirectLink: { // nouvelle prop pour la redirection
-			type: String,
-			default: null,
-		},
-	},
-	data() {
-		return {
-			logoImage, // utilise l'import pour le logo
-		};
-	},
-	methods: {
-		redirect() { // nouvelle méthode pour gérer la redirection
-			if (this.redirectLink) {
-				this.$router.push(this.redirectLink);
-			}
-		},
-	},
+    name: 'CardItem',
+    props: {
+        redirectLink: {
+            type: String,
+            default: null,
+        },
+        customLogo: {
+            type: String,
+            default: "/logos/logo.svg",
+        },
+    },
+    methods: {
+        redirect() {
+            if (this.redirectLink) {
+                this.$router.push(this.redirectLink);
+            }
+        },
+    },
 };
 </script>
 
@@ -45,7 +42,7 @@ export default {
 .card {
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    padding: 16px;
+    padding: 0 16px;
     box-shadow: 0 4px 6px var(--color-border);
     background-color: var(--color-background-soft);
     color: var(--color-text);
@@ -57,14 +54,16 @@ export default {
 
 .card-header {
     position: relative;
+    border-radius: 8px 8px 0 0;
+    padding: 16px;
     height: 150px;
     border-bottom: 1px solid var(--color-border);
     background-color: var(--color-background-secondary);
     margin: 0 -16px 16px -16px;
     transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
 }
 
-/* ajout du pseudo-élément pour le fond flouté identique à DisciplineItem */
 .card-header::before {
     content: "";
     position: absolute;
@@ -72,7 +71,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("@/assets/logo.svg") no-repeat center/cover;
+    background: var(--custom-logo) no-repeat center/cover;
     filter: blur(4px) brightness(0.7);
     z-index: -1;
 }
@@ -129,23 +128,28 @@ export default {
         align-items: center;
         text-align: left;
     }
+
     .card-header {
         height: auto;
         border: none;
         margin: 0;
         flex: 1;
     }
-    .card-header > div {
+
+    .card-header>div {
         flex-direction: row;
         gap: 8px;
         justify-content: flex-start;
     }
+
     .card-body {
         display: none;
     }
+
     .card-header::before {
         display: none;
     }
+
     .card-header h3 {
         margin: 0;
         font-size: 1rem;
