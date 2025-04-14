@@ -18,7 +18,7 @@
                 <div class="calendar-container">
                     <div style="display: flex; flex-direction: column;">
                         <h2>Vos derniers entrainements</h2>
-                        <calendar-heatmap dark-mode :values="parseTrainingStats(trainingStats)" :end-date="endDate" :round="3" :max="1" class="heatmap" />
+                        <calendar-heatmap dark-mode :values="adaptTrainingStatsHeatMap(trainingStats)" :end-date="endDate" :round="3" :max="1" class="heatmap" />
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView :exercice="selectedExercice" :chartOptions="chartOptions" :chartSeries="chartSeries"
+                <ExerciceView :exercice="selectedExercice"
                     @close="closePopup" style="width: 100%; height: 100%;" />
             </div>
         </div>
@@ -86,6 +86,7 @@ import ExerciceView from '@/views/ExerciceView.vue';
 import AddExerciceItem from '@/components/AddExerciceItem.vue';
 import { CalendarHeatmap } from 'vue3-calendar-heatmap';
 import EditButtons from '@/components/utils/EditButtons.vue';
+import { adaptTrainingStatsHeatMap } from '@/util/adapter/AdapterStats';
 import 'vue3-calendar-heatmap/dist/style.css';
 
 // Constante globale pour l'API
@@ -113,22 +114,6 @@ export default {
         const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
         const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
-        const chartSeries = ref([
-            {
-                name: 'Statistiques',
-                data: [30, 40, 35, 60, 65, 50, 70],
-            },
-        ]);
-
-        const chartOptions = ref({
-            stroke: {
-                curve: 'smooth',
-            },
-            xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            },
-        });
-
         const isEditMode = ref(false);
 
         const toggleEditMode = () => {
@@ -136,13 +121,11 @@ export default {
         };
 
         const saveChanges = () => {
-            // Logic to save changes
             console.log('Changes saved');
             isEditMode.value = false;
         };
 
         const cancelChanges = () => {
-            // Logic to cancel changes
             console.log('Changes canceled');
             isEditMode.value = false;
         };
@@ -240,19 +223,6 @@ export default {
             }
         };
 
-        const parseTrainingStats = (stats) => {
-            if (!stats) return []; // Added null check
-            // Adjust date by adding one day to align with heatmap dates
-            return Object.entries(stats).map(([date, value]) => {
-                let d = new Date(date);
-                d.setDate(d.getDate() + 1); // Correcting one-day offset
-                return {
-                    date: d.toISOString().split('T')[0],
-                    count: value === false ? 0 : 1
-                };
-            });
-        };
-
         const goBack = () => {
             router.back();
         };
@@ -287,7 +257,7 @@ export default {
             fetchTrainingStats();
         });
 
-        return { training, trainingStats, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded, parseTrainingStats, endDate, chartOptions, chartSeries, isEditMode, toggleEditMode, saveChanges, cancelChanges, showDeletePopup, openDeletePopup, closeDeletePopup, confirmDelete, launchTraining };
+        return { training, trainingStats, adaptTrainingStatsHeatMap, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded, endDate, isEditMode, toggleEditMode, saveChanges, cancelChanges, showDeletePopup, openDeletePopup, closeDeletePopup, confirmDelete, launchTraining };
     },
 };
 </script>
@@ -297,7 +267,6 @@ export default {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* Space between the title and the buttons */
 }
 
 .header-container {
@@ -313,7 +282,6 @@ export default {
     box-sizing: border-box;
     padding: 20px;
     overflow-x: visible;
-    /* Nouvelle propriété pour éviter que le contenu soit rogné */
 }
 
 .popup-overlay {
@@ -333,24 +301,19 @@ export default {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    /* Allow wrapping for smaller screens */
 }
 
 .training-info {
     margin-right: 20px;
     flex: 1 1 auto;
-    /* Allow the training info to take up available space */
 }
 
 .calendar-container {
     flex: 1 1 auto;
-    /* Default behavior for larger screens */
     display: flex;
     justify-content: flex-end;
-    /* Align heatmap to the right */
     align-items: center;
     margin-top: 20px;
-    /* Add spacing when moved below on smaller screens */
 }
 
 .heatmap {
@@ -366,9 +329,7 @@ export default {
 @media (max-width: 768px) {
     .calendar-container {
         flex: 1 1 100%;
-        /* Move to a new row on smaller screens */
         justify-content: center;
-        /* Center heatmap on smaller screens */
         margin-top: 20px;
     }
 }
