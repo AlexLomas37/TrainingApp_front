@@ -6,6 +6,7 @@ export interface Training {
     name: string;
     description: string;
     time: number;
+    imageLink: string;
     discipline: Discipline;
     exercices: Exercice[];  
 }
@@ -15,6 +16,7 @@ export class TrainingModel implements Training {
         public name: string,
         public description: string,
         public time: number,
+        public imageLink: string,
         public discipline: Discipline,
         public exercices: Exercice[]
     ) {}
