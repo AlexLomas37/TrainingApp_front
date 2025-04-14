@@ -1,9 +1,8 @@
 <template>
     <div class="card" @click="navigate">
-        <div class="card-header">
+        <div class="card-header" :style="{ '--bg-image': 'url(' + imageLink + ')' }">
             <div>
-                <img src="@/assets/logo.svg" alt="Logo" class="logo_front">
-                <h3>{{ title }}</h3>
+                <h3>{{ title }} ,eneekezfnjozfeonzefoj</h3>
             </div>
         </div>
         <div class="card-body">
@@ -28,6 +27,10 @@ export default {
             type: String,
             required: true,
         },
+        imageLink: {
+            type: String,
+            required: true,
+        },
     },
     methods: {
         navigate() {
@@ -39,11 +42,11 @@ export default {
 
 <style scoped>
 .card {
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255, .015);
+    background-color: var(--color-background-soft);
     width: 300px;
     height: 400px;
     margin: 16px auto;
@@ -53,8 +56,8 @@ export default {
 .card-header {
     position: relative;
     height: 150px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* white separator line */
-    margin: 0 -16px 16px -16px; /* extend header border to card edges */
+    border-bottom: 1px solid var(--color-border); 
+    margin: 0 -16px 16px -16px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -65,7 +68,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("@/assets/logo.svg") no-repeat center/cover;
+    background: no-repeat center/cover;
     filter: blur(4px) brightness(0.7);
     z-index: -1;
 }
