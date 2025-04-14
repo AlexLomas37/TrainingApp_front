@@ -4,6 +4,7 @@ export interface Discipline {
     id: number;
     name: string;
     description: string;
+    imageLink: string;
     trainings: Training[];    
 }
 
@@ -12,6 +13,7 @@ export class DisciplineModel implements Discipline {
         public id: number,
         public name: string,
         public description: string,
+        public imageLink: string,
         public trainings: Training[] = []
     ) {}
 
