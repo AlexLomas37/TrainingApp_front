@@ -10,7 +10,7 @@
           <span>{{ training.time }} min</span>
         </div>
         <hr class="divider" />
-        <ExerciceView :exercice="training.exercices[currentExerciceIndex]" :visible="true" />
+        <ExerciceView :exercice="training.exercices[currentExerciceIndex]" :visible="true" :showClose="false"/>
         <form class="statistics-form" @submit.prevent="submitStatistics">
             <div v-if="training.exercices[currentExerciceIndex]?.statisticsMap && Object.keys(training.exercices[currentExerciceIndex].statisticsMap).length > 0">
             <h3>Entrez vos statistiques</h3>

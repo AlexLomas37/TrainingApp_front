@@ -56,7 +56,7 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView :exercice="selectedExercice" @close="closePopup" style="width: 100%; height: 100%;" />
+                <ExerciceView :exercice="selectedExercice" @close="closePopup" style="width: 100%; height: 100%;" :showClose="true"/>
             </div>
         </div>
 

@@ -1,8 +1,7 @@
 <template>
     <div v-if="visible" class="exercice-card card">
         <div class="card-header">
-            <!-- Bouton ajouté pour fermer la page -->
-            <button class="close-btn" @click="closePage"><span class="material-symbols-outlined"> close </span></button>
+            <button v-if="showClose" class="close-btn" @click="closePage"><span class="material-symbols-outlined"> close </span></button>
             <h1>{{ exercice.name }}</h1>
         </div>
         <div class="card-body">
@@ -72,6 +71,10 @@ export default {
                 time: "00:00",
                 repetitions: "0",
             })
+        },
+        showClose: {
+            type: Boolean,
+            default: true
         }
     },
     setup(props) {
