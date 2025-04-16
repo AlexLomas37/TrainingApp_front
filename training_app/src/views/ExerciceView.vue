@@ -50,7 +50,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { adaptExerciceStatsMap } from '@/util/adapter/AdapterStats.js';
+import { adaptExerciceStatsMap } from '@/utils/AdapterStats.js';
 import ErrorPopup from '@/components/utils/ErrorPopup.vue';
 
 export default {

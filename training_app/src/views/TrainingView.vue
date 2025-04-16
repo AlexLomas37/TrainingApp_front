@@ -88,7 +88,7 @@ import { CalendarHeatmap } from 'vue3-calendar-heatmap';
 import EditButtons from '@/components/utils/EditButtons.vue';
 import ConfirmPopup from '@/components/utils/ConfirmPopup.vue';
 import ErrorPopup from '@/components/utils/ErrorPopup.vue';
-import { adaptTrainingStatsHeatMap } from '@/util/adapter/AdapterStats';
+import { adaptTrainingStatsHeatMap } from '@/utils/AdapterStats';
 import 'vue3-calendar-heatmap/dist/style.css';
 
 // Constante globale pour l'API
