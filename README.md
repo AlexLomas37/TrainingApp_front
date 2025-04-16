@@ -43,12 +43,15 @@ Elle est conçue pour être extensible et modulaire, facilitant l'ajout de nouve
 4. Accéder au site web via `http://localhost:3000`
 
 ### Backend
-- Cloner le dépot : `giit clone https://github.com/AlexLomas37/TrainingApp_back.git`
-- Ouvrir le projet dans IntelleJ IDEA
-- Configurer le JDK 17
-- Configurer la base de données H2
-- Lancer le projet ou alors générer un fichier war et le déployer sur un serveur d'application comme Tomcat.
-- Accéder à l'API via http://localhost:8090
+1. Cloner le dépot : 
+```sh
+git clone https://github.com/AlexLomas37/TrainingApp_back.git
+```
+2. Ouvrir le projet dans IntelleJ IDEA
+3. Configurer le JDK 17
+4. Configurer la base de données H2
+5. Lancer le projet ou alors générer un fichier war et le déployer sur un serveur d'application comme Tomcat. 
+6. Accéder à l'API via `http://localhost:8090`
 
 ## Utilisation
 - Accédez à l'application via [http://localhost:3000](http://localhost:3000).
