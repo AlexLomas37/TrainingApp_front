@@ -41,7 +41,7 @@ export default {
 <style scoped>
 .card {
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: 20px;
     padding: 0 16px;
     box-shadow: 0 4px 6px var(--color-border);
     background-color: var(--color-background-soft);
@@ -54,7 +54,7 @@ export default {
 
 .card-header {
     position: relative;
-    border-radius: 8px 8px 0 0;
+    border-radius: 20px 20px 0 0;
     padding: 16px;
     height: 150px;
     border-bottom: 1px solid var(--color-border);
