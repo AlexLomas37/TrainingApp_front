@@ -8,7 +8,7 @@
                         <span v-if="time">
                             <span class="material-symbols-outlined md-36">timer</span> {{ time + " min" }}
                         </span>
-                        <span v-if="repetitions">
+                        <span v-if="repetitions && repetitions > 1">
                             <span class="material-symbols-outlined">laps</span> {{ repetitions }}
                         </span>
                     </div>
