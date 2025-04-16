@@ -12,14 +12,13 @@
         <hr class="divider" />
         <ExerciceView :exercice="training.exercices[currentExerciceIndex]" :visible="true" />
         <form class="statistics-form" @submit.prevent="submitStatistics">
-          <div v-if="training.exercices[currentExerciceIndex]?.statisticsMap">
+            <div v-if="training.exercices[currentExerciceIndex]?.statisticsMap && Object.keys(training.exercices[currentExerciceIndex].statisticsMap).length > 0">
             <h3>Entrez vos statistiques</h3>
-            <div v-for="(label, stat) in training.exercices[currentExerciceIndex].statisticsMap" :key="stat"
-              class="stat-field">
+            <div v-for="(label, stat) in training.exercices[currentExerciceIndex].statisticsMap" :key="stat" class="stat-field">
               <label :for="stat">{{ label }}</label>
               <GenericInput type="number" v-model.number="statisticsForm[stat]" />
             </div>
-          </div>
+            </div>
         </form>
       </div>
       <div class="manage-training">
@@ -39,6 +38,14 @@
           :disabledPlay="disabled_play" :disabledStop="disabled_stop" :disabledNext="disabled_next"
           :disabledPrevious="disabled_previous" />
       </div>
+      <ConfirmPopup :visible="showConfirmPopup" 
+        message="Voulez-vous vraiment arrêter l'entraînement ? Les données sauvegardées seront envoyées."
+        @confirm="confirmStop" 
+        @cancel="showConfirmPopup = false" />
+      <ConfirmPopup :visible="errorPopupVisible" 
+        :message="errorPopupMessage"
+        @confirm="errorPopupVisible = false"
+        @cancel="errorPopupVisible = false" />
     </div>
   </main>
 </template>
@@ -48,6 +55,7 @@ import MediaButtons from '@/components/utils/MediaButtons.vue';
 import GenericButton from '@/components/utils/GenericButton.vue';
 import GenericInput from '@/components/utils/GenericInput.vue';
 import ExerciceView from './ExerciceView.vue';
+import ConfirmPopup from '@/components/utils/ConfirmPopup.vue';
 import { ExerciceSessionModel } from '@/models/ExerciceSession';
 import { TrainingSessionModel } from '@/models/TrainingSession';
 
@@ -68,33 +76,8 @@ const PauseCommand = {
 
 const StopCommand = {
   execute() {
-    if (window.confirm("Voulez-vous vraiment arrêter l'entraînement ?")) {
-      this.stopTimer();
-      if (!this.training) return;
-      this.currentExerciceSession.end = new Date();
-      this.currentExerciceSession.statisticsMap = new Map(Object.entries(this.statisticsForm));
-      console.log("ExerciceSession mise à jour:", this.currentExerciceSession);
-      // Vérification que la session n'est pas déjà présente dans la liste et sauvegarde des données
-      if (this.trainingSessionObject.getExerciceSession(this.currentExerciceSession.id)) {
-        console.log("Cette session d'exercice est déjà présente dans l'historique.");
-        this.trainingSessionObject.updateExerciceSession(this.currentExerciceSession);
-      } else {
-        console.log("Cette session d'exercice n'est pas encore dans l'historique.");
-        this.trainingSessionObject.addExerciceSession(this.currentExerciceSession);
-      }
-
-      this.currentExerciceSession = null;
-
-      // Mettre à jour la date de fin avant l'envoi
-      this.trainingSessionObject.end = new Date();
-      this.sendTrainingSession()
-        .then(() => {
-          console.log("Arrêt de l'entraînement et envoi de la session...");
-        })
-        .catch(error => console.error("Erreur lors de l'envoi de la session:", error));
-    } else {
-      console.log("Arrêt annulé.");
-    }
+    this.showConfirmPopup = true;
+    console.log("Ouverture de la popup de confirmation pour arrêter l'entraînement.");
   }
 };
 
@@ -135,7 +118,6 @@ const NextCommand = {
 
     this.updateButtons();
 
-    // Création d'une nouvelle ExerciceSession avec une nouvelle id (compteur incrémenté)
     const currentExercice = this.training.exercices[this.currentExerciceIndex];
     this.currentExerciceSession = new ExerciceSessionModel(
       ++this.exerciceSessionCounter,
@@ -170,7 +152,6 @@ const PreviousCommand = {
         }
         this.updateButtons();
         this.currentExercice = this.training.exercices[this.currentExerciceIndex];
-        // Décrémente le compteur lors du retour
         this.exerciceSessionCounter--;
         this.currentExerciceSession = this.trainingSessionObject.exerciceSessions.find(session => session.id === this.exerciceSessionCounter);
         if (this.currentExerciceSession && this.currentExerciceSession.statisticsMap) {
@@ -196,7 +177,8 @@ export default {
     MediaButtons,
     ExerciceView,
     GenericButton,
-    GenericInput
+    GenericInput,
+    ConfirmPopup
   },
   data() {
     return {
@@ -215,7 +197,10 @@ export default {
       disabled_previous: true,
       disabled_play: false,
       disabled_stop: true,
-      exerciceSessionCounter: 0, // nouvel id compteur
+      exerciceSessionCounter: 0,
+      showConfirmPopup: false,
+      errorPopupVisible: false,
+      errorPopupMessage: "",
     };
   },
   computed: {
@@ -237,7 +222,6 @@ export default {
       if (this.trainingSessionObject.exerciceSessions.length === 0 && this.currentExerciceSession === null) {
         console.log("Creation d'un nouvel objet ExerciceSession...");
         this.trainingSessionObject.start = new Date();
-        // Incrémente et utilise le compteur comme id
         this.currentExerciceSession = new ExerciceSessionModel(
           ++this.exerciceSessionCounter,
           this.training.exercices[this.currentExerciceIndex],
@@ -273,15 +257,21 @@ export default {
     },
     async getTrainingSessionData() {
       const id = this.$route.params.id;
-      const data = await fetchTrainingSession(id);
-      if (data && data.training) {
-        this.trainingSessionObject = new TrainingSessionModel(
-          data.id || 0,
-          data.training,
-          data.start ? new Date(data.start) : new Date(),
-          data.end ? new Date(data.end) : new Date()
-        );
-        this.training = data.training;
+      try {
+        const data = await fetchTrainingSession(id);
+        if (data && data.training) {
+          this.trainingSessionObject = new TrainingSessionModel(
+            data.id || 0,
+            data.training,
+            data.start ? new Date(data.start) : new Date(),
+            data.end ? new Date(data.end) : new Date()
+          );
+          this.training = data.training;
+        }
+      } catch (error) {
+        console.error('Error fetching training session:', error);
+        this.errorPopupMessage = "Erreur lors de la récupération d'informations";
+        this.errorPopupVisible = true;
       }
     },
 
@@ -317,6 +307,7 @@ export default {
         })
         .catch(error => {
           console.error("Erreur lors de l'envoi de la session:", error);
+          this.showConfirmPopup = false;
           throw error;
         });
     },
@@ -353,9 +344,30 @@ export default {
 
     updateButtons() {
       console.log("Modification des compteurs:", "Index =", this.currentExerciceIndex, "Repetition =", this.repetitionCount);
-      // Ajoutez ici toute autre action à exécuter à la modification des compteurs
       this.disabled_previous = this.currentExerciceIndex === 0 && this.repetitionCount === 1;
       this.disabled_next = this.currentExerciceIndex === this.training.exercices.length - 1 && this.repetitionCount === this.training.exercices[this.currentExerciceIndex].repetitions;
+    },
+    confirmStop() {
+      this.stopTimer();
+      if (!this.training) return;
+      this.currentExerciceSession.end = new Date();
+      this.currentExerciceSession.statisticsMap = new Map(Object.entries(this.statisticsForm));
+      console.log("ExerciceSession mise à jour:", this.currentExerciceSession);
+      if (this.trainingSessionObject.getExerciceSession(this.currentExerciceSession.id)) {
+        console.log("Cette session d'exercice est déjà présente dans l'historique.");
+        this.trainingSessionObject.updateExerciceSession(this.currentExerciceSession);
+      } else {
+        console.log("Cette session d'exercice n'est pas encore dans l'historique.");
+        this.trainingSessionObject.addExerciceSession(this.currentExerciceSession);
+      }
+      this.currentExerciceSession = null;
+      this.trainingSessionObject.end = new Date();
+      this.sendTrainingSession()
+        .then(() => {
+          console.log("Arrêt de l'entraînement et envoi de la session...");
+        })
+        .catch(error => console.error("Erreur lors de l'envoi de la session:", error));
+      this.showConfirmPopup = false;
     }
   },
 
@@ -434,7 +446,6 @@ main {
 .centered-content pre {
   width: 100%;
   white-space: normal;
-  /* pour autoriser le retour à la ligne */
 }
 
 .timer-info {

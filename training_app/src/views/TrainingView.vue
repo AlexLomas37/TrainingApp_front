@@ -18,7 +18,8 @@
                 <div class="calendar-container">
                     <div style="display: flex; flex-direction: column;">
                         <h2>Vos derniers entrainements</h2>
-                        <calendar-heatmap dark-mode :values="adaptTrainingStatsHeatMap(trainingStats)" :end-date="endDate" :round="3" :max="1" class="heatmap" />
+                        <calendar-heatmap dark-mode :values="adaptTrainingStatsHeatMap(trainingStats)"
+                            :end-date="endDate" :round="3" :max="1" class="heatmap" />
                     </div>
                 </div>
             </div>
@@ -38,8 +39,14 @@
             <div style="display: flex; align-items: center;">
                 <GenericButton icon="arrow_back" desktopText="Retour" mobileText="Retour" color="rgb(46, 46, 46)"
                     type="button" @click="goBack" />
-                <GenericButton icon="play_arrow" desktopText="Lancer l'entrainement" mobileText="S'entrainer"
-                    type="button" @click="launchTraining" />
+                <GenericButton 
+                    v-if="training.exercices && training.exercices.length" 
+                    icon="play_arrow" 
+                    desktopText="Lancer l'entrainement" 
+                    mobileText="S'entrainer"
+                    type="button" 
+                    @click="launchTraining" 
+                />
             </div>
         </div>
         <div v-else>
@@ -49,8 +56,7 @@
         <!-- Popup pour afficher ExerciceView -->
         <div v-if="showPopup" class="popup-overlay" @click.self="closePopup">
             <div class="popup-content">
-                <ExerciceView :exercice="selectedExercice"
-                    @close="closePopup" style="width: 100%; height: 100%;" />
+                <ExerciceView :exercice="selectedExercice" @close="closePopup" style="width: 100%; height: 100%;" />
             </div>
         </div>
 
@@ -63,17 +69,11 @@
         </div>
 
         <!-- Popup pour la suppression de l'entraînement -->
-        <div v-if="showDeletePopup" class="popup-overlay" @click.self="closeDeletePopup">
-            <div class="popup-content">
-                <p>Êtes-vous sûr de vouloir supprimer cet entraînement ?</p>
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <GenericButton icon="check" desktopText="Oui" color="#4caf50" type="button"
-                        @click="confirmDelete" />
-                    <GenericButton icon="close" desktopText="Non" color="#f44336" type="button"
-                        @click="closeDeletePopup" />
-                </div>
-            </div>
-        </div>
+        <ConfirmPopup :visible="showDeletePopup" message="Êtes-vous sûr de vouloir supprimer cet entraînement ?"
+            :confirmFn="confirmDelete" @cancel="closeDeletePopup" />
+
+        <!-- Added ErrorPopup to display error messages -->
+        <ErrorPopup :visible="errorVisible" :message="errorMessage" @close="errorVisible = false" />
     </div>
 </template>
 
@@ -86,6 +86,8 @@ import ExerciceView from '@/views/ExerciceView.vue';
 import AddExerciceItem from '@/components/AddExerciceItem.vue';
 import { CalendarHeatmap } from 'vue3-calendar-heatmap';
 import EditButtons from '@/components/utils/EditButtons.vue';
+import ConfirmPopup from '@/components/utils/ConfirmPopup.vue';
+import ErrorPopup from '@/components/utils/ErrorPopup.vue';
 import { adaptTrainingStatsHeatMap } from '@/util/adapter/AdapterStats';
 import 'vue3-calendar-heatmap/dist/style.css';
 
@@ -100,6 +102,8 @@ export default {
         AddExerciceItem,
         CalendarHeatmap,
         EditButtons,
+        ConfirmPopup,
+        ErrorPopup
     },
     setup() {
         const route = useRoute();
@@ -110,6 +114,8 @@ export default {
         const selectedExercice = ref(null);
         const showAddExercicePopup = ref(false);
         const showDeletePopup = ref(false);
+        const errorVisible = ref(false);
+        const errorMessage = ref('');
         const now = new Date();
         const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
         const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
@@ -150,6 +156,8 @@ export default {
                 router.back();
             } catch (error) {
                 console.error('Error deleting training:', error);
+                errorMessage.value = error.message || 'Erreur lors de la suppression de l\'entraînement.';
+                errorVisible.value = true;
             }
         };
 
@@ -157,6 +165,8 @@ export default {
             const trainingSession = await createTrainingSession(training.value.id);
             if (!trainingSession) {
                 console.error('Failed to create training session');
+                errorMessage.value = 'Erreur lors de la création de la session d\'entraînement.';
+                errorVisible.value = true;
                 return;
             }
             router.push({ name: 'trainingSession', params: { id: trainingSession.id } });
@@ -169,11 +179,13 @@ export default {
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
-                    throw new Error('Error fetching training');
+                    throw new Error('Erreur lors de la suppression de l\'entraînement.');
                 }
                 training.value = await response.json();
                 console.log('Training data:', training.value);
             } catch (error) {
+                errorMessage.value = error.message || 'Erreur lors de la récupération de l\'entraînement.';
+                errorVisible.value = true;
                 console.error('Error fetching training:', error);
             }
         };
@@ -184,13 +196,14 @@ export default {
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
-                    throw new Error('Error fetching training stats');
+                    throw new Error('Erreur lors de la récupération des statistiques d\'entraînement.');
                 }
                 const data = await response.json();
                 console.log('Training stats data:', data);
                 trainingStats.value = data;
-                console.log('Parsed training stats:', parseTrainingStats(data));
             } catch (error) {
+                errorMessage.value = error.message || 'Erreur lors de la récupération des statistiques d\'entraînement.';
+                errorVisible.value = true;
                 console.error('Error fetching training stats:', error);
             }
         };
@@ -213,12 +226,14 @@ export default {
                     body: JSON.stringify(trainingSession)
                 });
                 if (!response.ok) {
-                    throw new Error('Error creating training session');
+                    throw new Error('Erreur lors de la création de la session d\'entraînement.');
                 }
                 const data = await response.json();
                 console.log('Training session created:', data);
                 return data;
             } catch (error) {
+                errorMessage.value = error.message || 'Erreur lors de la création de la session d\'entraînement.';
+                errorVisible.value = true;
                 console.error('Error creating training session:', error);
             }
         };
@@ -257,7 +272,7 @@ export default {
             fetchTrainingStats();
         });
 
-        return { training, trainingStats, adaptTrainingStatsHeatMap, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded, endDate, isEditMode, toggleEditMode, saveChanges, cancelChanges, showDeletePopup, openDeletePopup, closeDeletePopup, confirmDelete, launchTraining };
+        return { training, trainingStats, adaptTrainingStatsHeatMap, goBack, addExercise, showPopup, selectedExercice, openExercicePopup, closePopup, showAddExercicePopup, closeAddExercicePopup, handleExerciceAdded, endDate, isEditMode, toggleEditMode, saveChanges, cancelChanges, showDeletePopup, openDeletePopup, closeDeletePopup, confirmDelete, launchTraining, errorVisible, errorMessage };
     },
 };
 </script>

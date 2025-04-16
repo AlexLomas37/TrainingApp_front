@@ -45,15 +45,20 @@
                 <p>Aucune statistique disponible pour cet exercice.</p>
             </div>
         </div>
+        <ErrorPopup :visible="errorPopupVisible" :message="errorPopupMessage" @update:visible="val => errorPopupVisible = val" />
     </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { adaptExerciceStatsMap } from '@/util/adapter/AdapterStats.js';
+import ErrorPopup from '@/components/utils/ErrorPopup.vue';
 
 export default {
     name: "ExerciceView",
+    components: {
+        ErrorPopup
+    },
     props: {
         visible: {
             type: Boolean,
@@ -74,6 +79,8 @@ export default {
         const statistics = ref([]);
         const accordionOpen = ref(false);
         const parsedStatistics = ref({});
+        const errorPopupVisible = ref(false);
+        const errorPopupMessage = ref('');
 
         const fetchStatistics = async () => {
             try {
@@ -89,6 +96,8 @@ export default {
                 console.log('Parsed Statistics:', parsedStatistics.value);
             } catch (error) {
                 console.error('Error fetching statistics:', error);
+                errorPopupMessage.value = "Erreur lors de la récupération des statistiques de l'exercice.";
+                errorPopupVisible.value = true;
             }
         };
 
@@ -100,6 +109,8 @@ export default {
             statistics,
             parsedStatistics,
             fetchStatistics,
+            errorPopupVisible,
+            errorPopupMessage,
             adaptExerciceStatsMap
         };
     },

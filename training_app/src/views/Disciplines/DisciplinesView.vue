@@ -4,6 +4,7 @@ import type { Discipline } from '@/models/Discipline'
 import CardItem from '@/components/utils/CardItem.vue'
 import AddDisciplineItem from '@/components/AddDisciplineItem.vue'
 import GenericButton from '@/components/utils/GenericButton.vue'
+import ErrorPopup from '@/components/utils/ErrorPopup.vue'
 
 const apiData = ref<Discipline[]>([])
 const error = ref(null)
@@ -61,9 +62,6 @@ onMounted(() => {
             <template v-if="loading">
                 <p>Chargement des disciplines...</p>
             </template>
-            <template v-else-if="error">
-                <p>Erreur : {{ error }}</p>
-            </template>
             <template v-else>
                 <template v-if="apiData.length === 0">
                     <p>Aucune discipline disponible pour le moment.</p>
@@ -84,6 +82,7 @@ onMounted(() => {
             </template>
         </div>
     </main>
+    <ErrorPopup :visible="error" :message="error" @update:visible="() => error = null" />
 </template>
 
 <style scoped>

@@ -7,8 +7,10 @@ import AddTrainingItem from '@/components/AddTrainingItem.vue';
 import GenericInput from '@/components/utils/GenericInput.vue';
 import GenericTextArea from '@/components/utils/GenericTextArea.vue';
 import EditButtons from '@/components/utils/EditButtons.vue';
-import type { Discipline } from '@/models/Discipline'
-import type { Training } from '@/models/Training'
+import ConfirmPopup from '@/components/utils/ConfirmPopup.vue';
+import ErrorPopup from '@/components/utils/ErrorPopup.vue';
+import type { Discipline } from '@/models/Discipline';
+import type { Training } from '@/models/Training';
 
 const BASE_API_URL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
@@ -19,6 +21,8 @@ const originalDiscipline = ref<Discipline>();
 const showPopup = ref(false);
 const editing = ref(false);
 const showDeletePopup = ref(false);
+const errorPopupVisible = ref(false);
+const errorPopupMessage = ref('');
 
 async function fetchDiscipline() {
     const id = route.params.id;
@@ -26,7 +30,7 @@ async function fetchDiscipline() {
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error('Erreur lors de la récupération de la discipline');
+            throw new Error('Erreur lors de la récupération de la discipline.');
         }
         const data = await response.json();
         discipline.value = data;
@@ -34,6 +38,8 @@ async function fetchDiscipline() {
         console.log('Discipline data:', discipline.value);
     } catch (error) {
         console.error('Error fetching discipline:', error);
+        errorPopupMessage.value = "Erreur lors de la récupération de la discipline.";
+        errorPopupVisible.value = true;
     }
 };
 
@@ -55,6 +61,8 @@ async function saveDiscipline() {
         editing.value = false;
     } catch (error) {
         console.error('Error saving discipline:', error);
+        errorPopupMessage.value = "Erreur lors de la sauvegarde de la discipline";
+        errorPopupVisible.value = true;
     }
 };
 
@@ -86,6 +94,8 @@ async function confirmDelete() {
         router.push('/disciplines');
     } catch (error) {
         console.error('Error deleting discipline:', error);
+        errorPopupMessage.value = "Erreur lors de la suppression de la discipline";
+        errorPopupVisible.value = true;
     }
 }
 
@@ -112,7 +122,7 @@ onMounted(() => {
                 <div class="header-container">
                     <h1>{{ discipline.name }}</h1>
                     <GenericButton icon="edit" desktopText="Modifier" color="#2196f3" type="button"
-                    @click="modifyDiscipline" />
+                        @click="modifyDiscipline" />
                 </div>
                 <p>{{ discipline.description }}</p>
                 <p>Nombre d'entraînements : {{ discipline.trainings ? discipline.trainings.length : 0 }}</p>
@@ -123,10 +133,10 @@ onMounted(() => {
                     @click="showPopup = true" />
             </div>
             <div v-if="discipline.trainings && discipline.trainings.length" class="cards-container">
-                <CardItem v-for="(training, index) in discipline.trainings" :key="index" :customLogo="training.imageLink"
-                    @click="() => goToTraining(training)">
+                <CardItem v-for="(training, index) in discipline.trainings" :key="index"
+                    :customLogo="training.imageLink" @click="() => goToTraining(training)">
                     <template #header>
-                        <img :src="training.imageLink" alt="Logo" class="logo_front"/>
+                        <img :src="training.imageLink" alt="Logo" class="logo_front" />
                         <h2>{{ training.name }}</h2>
                     </template>
                     <template #body>
@@ -141,6 +151,9 @@ onMounted(() => {
             <div v-else>
                 <p>Aucun entraînement pour cette discipline.</p>
             </div>
+            <ConfirmPopup :visible="showDeletePopup" message="Êtes-vous sûr de vouloir supprimer cette discipline ?"
+                :confirmFn="confirmDelete" @update:visible="(val: boolean) => showDeletePopup = val" />
+            <ErrorPopup :visible="errorPopupVisible" :message="errorPopupMessage" @update:visible="(val: boolean) => errorPopupVisible = val" />
         </div>
         <div v-else>
             Chargement...
@@ -150,27 +163,16 @@ onMounted(() => {
                 <AddTrainingItem :disciplineId="discipline!.id" @close="showPopup = false" />
             </div>
         </div>
-        <div v-if="showDeletePopup" class="popup-overlay" @click.self="closeDeletePopup">
-            <div class="popup-content">
-                <p>Êtes-vous sûr de vouloir supprimer cette discipline ?</p>
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <GenericButton icon="check" desktopText="Oui" color="#4caf50" type="button"
-                        @click="confirmDelete" />
-                    <GenericButton icon="close" desktopText="Non" color="#f44336" type="button"
-                        @click="closeDeletePopup" />
-                </div>
-            </div>
-        </div>
         <GenericButton icon="arrow_back" desktopText="Retour" color="rgb(46, 46, 46)" type="button"
             @click="$router.push('/disciplines')" />
     </main>
 </template>
 
 <style scoped>
-
 .discipline-container {
     width: 100%;
 }
+
 /* Styles pour popup */
 .popup-overlay {
     position: fixed;
@@ -182,13 +184,13 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px;
 }
 
 .popup-content {
     box-shadow: 0 4px 8px var(--color-border);
     border-radius: 15px;
     max-width: 800px;
-    width: 90%;
 }
 
 main {
