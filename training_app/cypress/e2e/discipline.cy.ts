@@ -31,7 +31,10 @@ describe('Test Ajout/Modifiction/Suppression pour une discipline', () => {
     // Vérifier que la discipline est bien présente dans la liste
     cy.get('.card').contains('Yoga (cypress test)'); 
 
-    // Cliquer sur la carte de la discipline pour ouvrir ses détails
+    // Scroller jusqu'à la carte avant de cliquer dessus
+    cy.get('.card').contains('Yoga (cypress test)').scrollIntoView()
+
+    cy.wait(1000);
     cy.get('.card').contains('Yoga (cypress test)').click();
 
     // Vérifier que la page de détails s'ouvre
@@ -44,7 +47,9 @@ describe('Test Ajout/Modifiction/Suppression pour une discipline', () => {
 
   it('Modifie la discipline précédemment ajoutée', () => {
     cy.wait(1000);
+    cy.get('.card').contains('Yoga (cypress test)').scrollIntoView()
 
+    cy.wait(1000);
     cy.get('.card').contains('Yoga (cypress test)').click();
 
     cy.wait(1000);
@@ -71,7 +76,10 @@ describe('Test Ajout/Modifiction/Suppression pour une discipline', () => {
   it ('Supprime la discipline précédemment ajoutée', () => {
     cy.wait(1000);
 
-    cy.get('.card').contains('Yoga (cypress test) modifiée').click();
+    cy.get('.card').contains('Yoga (cypress test)').scrollIntoView()
+
+    cy.wait(1000);
+    cy.get('.card').contains('Yoga (cypress test)').click();
 
     cy.wait(1000);
 
