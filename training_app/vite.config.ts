@@ -14,7 +14,8 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'https://trainingapi-ffhye2c8bmehd3gw.canadacentral-01.azurewebsites.net/',
+        //target: 'https://trainingapi-ffhye2c8bmehd3gw.canadacentral-01.azurewebsites.net/',
+        target: 'http://localhost:8090',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
