@@ -24,7 +24,6 @@ Elle est conçue pour être extensible et modulaire, facilitant l'ajout de nouve
 - Dependancy Injection : Permet de gérer les dépendances entre les classes et d'injecter des objets dans les classes qui en ont besoin.
 - Repository : Permet de gérer la persistante des données.
 
-
 ## Installation
 
 ### Frontend
@@ -71,6 +70,17 @@ git clone https://github.com/AlexLomas37/TrainingApp_back.git
    ```sh
    npx cypress open
    ``` 
+
+## Architecture
+Le projet est structuré de manière à séparer les différentes couches de l'application :
+- `components` : Contient les composants Vue.js réutilisables dans l'application.
+- `views` : Contient les différentes pages de l'application, chacune correspondant à une vue spécifique.
+- `store` : Gère l'état global de l'application à l'aide de Vuex.
+- `assets` : Contient les fichiers statiques comme les images et les styles CSS.
+- `router` : Configure les routes de l'application pour naviguer entre les différentes vues.
+- `utils` : Contient des fonctions utilitaires réutilisables dans l'application.
+- `tests` : Contient les tests end-to-end pour garantir la qualité du code.
+
 ## Technologies
  - Node.js
  - Vue.js
