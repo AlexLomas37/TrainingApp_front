@@ -15,14 +15,14 @@ Elle est conçue pour être extensible et modulaire, facilitant l'ajout de nouve
  - Gestion des session d'exercices
  - Retour de données statistiques sur les entraînements et des exercices
 
- ## Design pattern implémentés
-- Factory : Récupère dynamiquement un objet Training ou Exercice pour choisir la stratégie de statistiques à appliquer.
-- Strategy : Permet de choisir la stratégie de statistiques à appliquer sur un entraînement ou un exercice.
-- Decorator : Permet de retourner des exercices/trainings avec leurs statistiques sans changer la structure de base.
-- Repository : Permet de gérer la persistante des données.
-- Command : (Implémenté dans l'application front) Permet de gérer le lancement et l'arret des entrainements.
-- Adapter : (Implémenté dans l'application front) Permet la communication entre les données de l'api et ApexChart.
+## Design pattern implémentés
+- Factory : Fournit des stratégies de calcul de statistiques en fonction du type d'objet (Training ou Exercice) et du type de statistique souhaité.
+- Strategy : Adapte la stratégie de calcul statistique à appliquer sur un objet (Training ou Exercice) en fonction du type de statistque souhaité.
+- Decorator : Permet de retourner des exercices/trainings décorés avec leurs statistiques sans changer la structure de base.
+- Command : (Implémenté dans l'application front) Permet de gérer le lancement/la mise en pause/l'arret des entrainements.
+- Adapter : (Implémenté dans l'application front) Permet de convertir les données de l'api vers les diagrammes de la librairie ApexChart.
 - Dependancy Injection : Permet de gérer les dépendances entre les classes et d'injecter des objets dans les classes qui en ont besoin.
+- Repository : Permet de gérer la persistante des données.
 
 
 ## Installation
@@ -49,7 +49,15 @@ git clone https://github.com/AlexLomas37/TrainingApp_back.git
 ```
 2. Ouvrir le projet dans IntelleJ IDEA
 3. Configurer le JDK 17
-4. Configurer la base de données H2
+4. Configurer la base de données
+    - Créer une base de données `training_app_db` dans mysql
+    - Configurer le fichier `application.properties` pour se connecter à la base de données
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/training_app_db
+    spring.datasource.username=
+    spring.datasource.password=
+    ```
+   Veuillez à remplir le nom d'utilisateur et le mot de passe de votre base de données mysql.
 5. Lancer le projet ou alors générer un fichier war et le déployer sur un serveur d'application comme Tomcat. 
 6. Accéder à l'API via `http://localhost:8090`
 
